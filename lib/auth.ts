@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./prisma";
 import bcrypt from "bcryptjs";
+import { checkRateLimit, recordFailedAttempt, clearRateLimit } from "./rate-limit";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -29,16 +30,27 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        const identifier = credentials.identifier;
+
+        // 1. Check Rate Limit
+        const rateLimitCheck = checkRateLimit(identifier);
+        if (!rateLimitCheck.allowed) {
+          throw new Error(rateLimitCheck.message);
+        }
+
         const user = await prisma.user.findFirst({
           where: {
             OR: [
-              { email: credentials.identifier },
-              { phone: credentials.identifier }
+              { email: identifier },
+              { phone: identifier }
             ]
           }
         });
 
         if (!user || !user.password) {
+          // Record failed attempt even if user doesn't exist to prevent user enumeration via rate limits
+          const failResult = recordFailedAttempt(identifier);
+          if (!failResult.allowed) throw new Error(failResult.message);
           return null;
         }
 
@@ -51,8 +63,14 @@ export const authOptions: NextAuthOptions = {
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isPasswordValid) {
+          // Record failed attempt for invalid password
+          const failResult = recordFailedAttempt(identifier);
+          if (!failResult.allowed) throw new Error(failResult.message);
           return null;
         }
+
+        // Successful login: clear rate limit
+        clearRateLimit(identifier);
 
         return {
           id: user.id,
