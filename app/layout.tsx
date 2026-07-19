@@ -4,6 +4,8 @@ import { Providers } from "./Providers";
 import { Navbar } from "@/components/Navbar";
 import { ProductChatWidget } from "@/components/ProductChatWidget";
 
+import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
+
 export const metadata: Metadata = {
   title: "AnyPrint Avenue | Custom Apparel & Printing",
   description: "Your one-stop shop for custom shirts, chibi designs, and premium printing services.",
@@ -20,6 +22,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {children}
+          <ProfileCompletionModal />
           <ProductChatWidget />
         </Providers>
       </body>

@@ -78,7 +78,18 @@ export const authOptions: NextAuthOptions = {
 
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { image: true, name: true, isBanned: true, bannedUntil: true, role: true }
+          select: { 
+            image: true, 
+            name: true, 
+            isBanned: true, 
+            bannedUntil: true, 
+            role: true,
+            phone: true,
+            address: true,
+            city: true,
+            province: true,
+            zipCode: true
+          }
         });
 
         if (dbUser) {
@@ -91,6 +102,9 @@ export const authOptions: NextAuthOptions = {
           session.user.image = dbUser.image;
           session.user.name = dbUser.name;
           (session.user as any).role = dbUser.role; // ALWAYS use fresh role from DB
+          
+          const isProfileComplete = Boolean(dbUser.phone && dbUser.address);
+          (session.user as any).isProfileComplete = isProfileComplete;
         }
       }
       return session;
