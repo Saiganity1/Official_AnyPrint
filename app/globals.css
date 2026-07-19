@@ -1,19 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap');
 
 :root {
-  /* Dynamic Premium Dark Theme (Default) */
-  --background: #0f172a;
-  --background-secondary: #1e293b;
-  --foreground: #f8fafc;
-  --foreground-muted: #94a3b8;
+  /* Dynamic Premium Light Theme (Default) */
+  --background: #ffffff;
+  --background-secondary: #f9fafb;
+  --foreground: #111827;
+  --foreground-muted: #6b7280;
   
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --secondary: #ec4899;
-  --accent: #8b5cf6;
+  /* CMY Logo Accents */
+  --primary: #00aeef; /* Cyan */
+  --primary-hover: #0095cc;
+  --secondary: #ec008c; /* Magenta */
+  --accent: #fff200; /* Yellow */
   
-  --border: #334155;
-  --card-bg: rgba(30, 41, 59, 0.7);
+  --border: #e5e7eb;
+  --card-bg: rgba(255, 255, 255, 0.9);
   
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
@@ -25,14 +26,14 @@
   --transition-slow: 0.5s ease;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffffff;
-    --background-secondary: #f1f5f9;
-    --foreground: #0f172a;
-    --foreground-muted: #64748b;
-    --border: #e2e8f0;
-    --card-bg: rgba(255, 255, 255, 0.8);
+    --background: #000000;
+    --background-secondary: #111111;
+    --foreground: #ffffff;
+    --foreground-muted: #a1a1aa;
+    --border: #333333;
+    --card-bg: rgba(17, 17, 17, 0.8);
   }
 }
 
@@ -127,7 +128,7 @@ input, textarea, select {
 
 /* Button Upgrades */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), #2563eb);
+  background: var(--primary);
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: var(--radius-md);
@@ -135,13 +136,13 @@ input, textarea, select {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 6px -1px rgba(0, 174, 239, 0.4);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5);
-  background: linear-gradient(135deg, #4f46e5, var(--primary));
+  box-shadow: 0 10px 15px -3px rgba(0, 174, 239, 0.5);
+  background: var(--primary-hover);
 }
 
 .btn-primary:active {
@@ -165,7 +166,7 @@ input, textarea, select {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(to right, var(--primary), var(--secondary));
+  background-image: linear-gradient(to right, var(--primary), var(--secondary), var(--accent));
 }
 
 /* Micro-animations */
@@ -202,13 +203,13 @@ input, textarea, select {
   z-index: 50;
   padding: 1rem 0;
   border-bottom: 1px solid var(--border);
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   .navbar {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.8);
   }
 }
 
