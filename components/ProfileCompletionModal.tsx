@@ -55,11 +55,8 @@ export function ProfileCompletionModal() {
 
       toast.success("Profile completed successfully!");
       
-      // Force next-auth to refresh the session token so isProfileComplete becomes true
-      await update();
-      
-      setIsOpen(false);
-      router.refresh();
+      // Force a hard reload to ensure NextAuth fetches the completely fresh session token
+      window.location.reload();
     } catch (error: any) {
       toast.error(error.message);
     } finally {
