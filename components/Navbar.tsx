@@ -15,8 +15,9 @@ export function Navbar() {
     <nav className="navbar">
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Link href="/" className="text-gradient" style={{ fontSize: '1.5rem', fontWeight: '800', fontFamily: 'Outfit, sans-serif' }}>
-            AnyPrint Avenue
+          <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.jpg" alt="AnyPrint Avenue" style={{ height: '40px', width: 'auto', borderRadius: '4px' }} />
           </Link>
           <div className="hidden-mobile">
             <Suspense fallback={<div style={{ width: '200px' }} />}>
