@@ -118,38 +118,62 @@ export default async function Home() {
           position: 'absolute',
           top: '-10%', left: '-10%',
           width: '50vw', height: '50vw',
-          background: 'radial-gradient(circle, rgba(0, 174, 239, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(0, 174, 239, 0.4) 0%, transparent 70%)',
           borderRadius: '50%',
-          filter: 'blur(60px)'
+          filter: 'blur(80px)'
         }}></div>
         <div className="animate-orb-2" style={{
           position: 'absolute',
           bottom: '-10%', right: '-10%',
           width: '40vw', height: '40vw',
-          background: 'radial-gradient(circle, rgba(236, 0, 140, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(236, 0, 140, 0.4) 0%, transparent 70%)',
           borderRadius: '50%',
-          filter: 'blur(60px)'
+          filter: 'blur(80px)'
         }}></div>
         <div className="animate-orb-3" style={{
           position: 'absolute',
           top: '30%', left: '40%',
           width: '30vw', height: '30vw',
-          background: 'radial-gradient(circle, rgba(255, 242, 0, 0.06) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(255, 242, 0, 0.3) 0%, transparent 70%)',
           borderRadius: '50%',
-          filter: 'blur(60px)'
+          filter: 'blur(80px)'
         }}></div>
 
-        <div className="container animate-fade-in" style={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
-          <h1 style={{ fontSize: '4rem', marginBottom: '1.5rem', lineHeight: '1.1' }}>
-            Wear Your <span className="text-gradient">Imagination</span>
-          </h1>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '2.5rem', color: 'var(--foreground-muted)', fontWeight: '400', maxWidth: '600px', margin: '0 auto' }}>
-            Premium custom apparel and high-quality printing services tailored exactly to your brand's unique identity.
-          </h2>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2.5rem' }}>
-            <Link href="/products" className="btn-primary" style={{ fontSize: '1.125rem', padding: '1rem 2rem' }}>
-              Shop Now
-            </Link>
+        <div className="container animate-fade-in" style={{ position: 'relative', zIndex: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
+            {/* Left Column - Text */}
+            <div style={{ textAlign: 'left' }}>
+              <h1 style={{ fontSize: '4.5rem', marginBottom: '1.5rem', lineHeight: '1.1' }}>
+                Wear Your <span className="text-gradient">Imagination</span>
+              </h1>
+              <h2 style={{ fontSize: '1.25rem', marginBottom: '2.5rem', color: 'var(--foreground-muted)', fontWeight: '400', maxWidth: '600px' }}>
+                Premium custom apparel and high-quality printing services tailored exactly to your brand's unique identity.
+              </h2>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <Link href="/products" className="btn-primary" style={{ fontSize: '1.125rem', padding: '1rem 2rem' }}>
+                  Shop Now
+                </Link>
+                <Link href="#services" className="btn-secondary" style={{ fontSize: '1.125rem', padding: '1rem 2rem' }}>
+                  Our Services
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column - Premium Mockup */}
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div className="glass-card" style={{ padding: '1rem', transform: 'rotate(2deg)', maxWidth: '450px', width: '100%', position: 'relative' }}>
+                {/* Decorative glowing backplate */}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(45deg, var(--primary), var(--secondary))', opacity: 0.1, borderRadius: 'inherit', filter: 'blur(20px)' }}></div>
+                <Image 
+                  src="/hero-mockup.png" 
+                  alt="Premium Custom Apparel Mockup" 
+                  width={600} 
+                  height={600} 
+                  style={{ width: '100%', height: 'auto', borderRadius: 'var(--radius-md)', position: 'relative', zIndex: 2 }}
+                  priority
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
