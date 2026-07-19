@@ -135,20 +135,10 @@ export default async function Home() {
           <h1 style={{ fontSize: '4rem', marginBottom: '1.5rem', lineHeight: '1.1' }}>
             Wear Your <span className="text-gradient">Imagination</span>
           </h1>
-          <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--foreground)' }}>Welcome to Anyprint Avenue</h2>
-          <div style={{ color: 'var(--foreground-muted)', fontSize: '1.125rem', lineHeight: '1.8', maxWidth: '600px', margin: '0 auto', textAlign: 'left', display: 'inline-block' }}>
-            <p>✅ Cash on Delivery (COD) available via J&T Express.</p>
-            <p>✅ Business Hours: Monday to Saturday, 8:00 AM - 5:00 PM. Orders are typically processed and shipped within 1 to 2 business days.</p>
-            <p>✅ Production begins once a drop-off schedule is confirmed. We kindly request that you avoid cancellations to support our production workflow.</p>
-            <br/>
-            <p style={{ fontWeight: 'bold', color: 'var(--foreground)' }}>Estimated Delivery Timeframes</p>
-            <p>🚚 Metro Manila: 2-3 business days</p>
-            <p>🚚 Luzon: 2-5 business days</p>
-            <p>🚚 Visayas/Mindanao: 4-10 business days</p>
-            <br/>
-            <p style={{ fontSize: '0.9rem' }}>Note: Delivery estimates are based on standard courier guidelines.</p>
-          </div>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '2.5rem', color: 'var(--foreground-muted)', fontWeight: '400', maxWidth: '600px', margin: '0 auto' }}>
+            Premium custom apparel and high-quality printing services tailored exactly to your brand's unique identity.
+          </h2>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '2.5rem' }}>
             <Link href="/products" className="btn-primary" style={{ fontSize: '1.125rem', padding: '1rem 2rem' }}>
               Shop Now
             </Link>
