@@ -114,19 +114,27 @@ export default async function Home() {
         background: 'linear-gradient(135deg, var(--background) 0%, var(--background-secondary) 100%)',
         overflow: 'hidden'
       }}>
-        <div style={{
+        <div className="animate-orb-1" style={{
           position: 'absolute',
           top: '-10%', left: '-10%',
           width: '50vw', height: '50vw',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(0, 174, 239, 0.08) 0%, transparent 70%)',
           borderRadius: '50%',
           filter: 'blur(60px)'
         }}></div>
-        <div style={{
+        <div className="animate-orb-2" style={{
           position: 'absolute',
           bottom: '-10%', right: '-10%',
           width: '40vw', height: '40vw',
-          background: 'radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(236, 0, 140, 0.08) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)'
+        }}></div>
+        <div className="animate-orb-3" style={{
+          position: 'absolute',
+          top: '30%', left: '40%',
+          width: '30vw', height: '30vw',
+          background: 'radial-gradient(circle, rgba(255, 242, 0, 0.06) 0%, transparent 70%)',
           borderRadius: '50%',
           filter: 'blur(60px)'
         }}></div>
