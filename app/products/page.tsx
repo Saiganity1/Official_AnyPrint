@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { Star, PackageSearch, FilterX } from "lucide-react";
 
 import { CATEGORIES } from "@/lib/constants";
 import { SortDropdown } from "@/components/SortDropdown";
@@ -110,9 +110,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
           {/* Header & Sort */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', background: 'var(--background-secondary)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
-            <div style={{ color: 'var(--foreground-muted)' }}>
-              Showing {products.length > 0 ? (page - 1) * TAKE + 1 : 0} - {Math.min(page * TAKE, totalProducts)} of {totalProducts} product{totalProducts !== 1 ? 's' : ''}
+          <div className="glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', padding: '1rem 1.5rem', borderRadius: 'var(--radius-md)' }}>
+            <div style={{ color: 'var(--foreground-muted)', fontWeight: '500' }}>
+              Showing <span style={{ color: 'var(--foreground)' }}>{products.length > 0 ? (page - 1) * TAKE + 1 : 0} - {Math.min(page * TAKE, totalProducts)}</span> of <span style={{ color: 'var(--foreground)' }}>{totalProducts}</span> product{totalProducts !== 1 ? 's' : ''}
             </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -122,8 +122,20 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
           </div>
 
           {products.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '4rem', background: 'var(--background-secondary)', borderRadius: 'var(--radius-lg)' }}>
-              <p style={{ color: 'var(--foreground-muted)' }}>No products found matching your criteria.</p>
+            <div className="glass-card" style={{ textAlign: 'center', padding: '5rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '1.5rem', borderRadius: '50%', color: 'var(--primary)', marginBottom: '1rem' }}>
+                <PackageSearch size={48} />
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '600' }}>No products found</h3>
+              <p style={{ color: 'var(--foreground-muted)', maxWidth: '400px' }}>
+                We couldn't find any products matching your current filters. Try adjusting your search or category.
+              </p>
+              {(search || category) && (
+                <Link href="/products" className="btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem' }}>
+                  <FilterX size={18} />
+                  Clear All Filters
+                </Link>
+              )}
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '2rem' }}>
