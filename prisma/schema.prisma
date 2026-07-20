@@ -60,6 +60,8 @@ model User {
   conversations Conversation[]
   inventoryLogs InventoryLog[]
   createdAt     DateTime  @default(now())
+
+  @@index([role])
 }
 
 model Product {
@@ -79,6 +81,8 @@ model Product {
   conversations Conversation[]
   variants      ProductVariant[]
   inventoryLogs InventoryLog[]
+
+  @@index([category])
 }
 
 model ProductImage {
@@ -86,6 +90,8 @@ model ProductImage {
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
+
+  @@index([productId])
 }
 
 model ProductVariant {
@@ -102,6 +108,8 @@ model ProductVariant {
 
   orderItems OrderItem[]
   inventoryLogs InventoryLog[]
+
+  @@index([productId])
 }
 
 model InventoryLog {
@@ -116,6 +124,9 @@ model InventoryLog {
   quantity  Int
   reason    String?
   createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([userId])
 }
 
 model Review {
@@ -129,6 +140,8 @@ model Review {
   createdAt DateTime @default(now())
 
   @@unique([userId, productId])
+  @@index([productId])
+  @@index([userId])
 }
 
 model Order {
@@ -141,6 +154,9 @@ model Order {
   status          String      @default("PENDING") // "PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"
   items           OrderItem[]
   createdAt       DateTime    @default(now())
+
+  @@index([userId])
+  @@index([status])
 }
 
 model OrderItem {
@@ -153,6 +169,9 @@ model OrderItem {
   variant   ProductVariant? @relation(fields: [variantId], references: [id])
   quantity  Int
   price     Float
+
+  @@index([orderId])
+  @@index([productId])
 }
 
 model Conversation {
@@ -165,6 +184,9 @@ model Conversation {
   user      User     @relation(fields: [userId], references: [id])
   product   Product? @relation(fields: [productId], references: [id])
   messages  Message[]
+
+  @@index([userId])
+  @@index([productId])
 }
 
 model Message {
@@ -176,6 +198,9 @@ model Message {
   isRead         Boolean      @default(false)
 
   conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  @@index([conversationId])
+  @@index([isRead])
 }
 
 model PasswordResetToken {
