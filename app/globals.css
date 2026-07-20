@@ -94,8 +94,8 @@ input, textarea, select {
 
 /* Glassmorphic Cards & Hover Effects */
 .glass-card {
-  background: linear-gradient(135deg, rgba(0, 174, 239, 0.08) 0%, rgba(236, 0, 140, 0.08) 50%, rgba(255, 242, 0, 0.08) 100%), var(--background-secondary);
-  border: 1px solid rgba(236, 0, 140, 0.15); /* Subtle pink border to match the middle */
+  background: var(--background);
+  border: 1px solid var(--border);
   backdrop-filter: blur(12px);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
