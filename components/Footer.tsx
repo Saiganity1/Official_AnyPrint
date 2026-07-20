@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Globe, MessageCircle } from "lucide-react";
 
 export function Footer() {
   return (
@@ -31,7 +31,7 @@ export function Footer() {
               background: 'var(--background)', border: '1px solid var(--border)',
               color: 'var(--foreground)', transition: 'all 0.2s'
             }}>
-              <Facebook size={20} />
+              <Globe size={20} />
             </Link>
             <Link href="#" style={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'center', 
@@ -39,7 +39,7 @@ export function Footer() {
               background: 'var(--background)', border: '1px solid var(--border)',
               color: 'var(--foreground)', transition: 'all 0.2s'
             }}>
-              <Instagram size={20} />
+              <MessageCircle size={20} />
             </Link>
           </div>
         </div>
