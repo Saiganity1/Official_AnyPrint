@@ -2,42 +2,29 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { usePathname } from "next/navigation";
 import { ShoppingCart, User, LogOut, Package, Menu, X } from "lucide-react";
 import { SearchBar } from "./SearchBar";
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState } from "react";
 import { useCart } from "./CartContext";
 
 export function Navbar() {
   const { data: session } = useSession();
   const { openCart, items } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const pathname = usePathname();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
-    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
+    <nav className="navbar">
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
           <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.jpg" alt="AnyPrint Avenue" style={{ height: '60px', width: 'auto', borderRadius: '4px' }} />
+            <img src="/logo.jpg" alt="AnyPrint Avenue" style={{ height: '40px', width: 'auto', borderRadius: '4px', transform: 'scale(1.8)', transformOrigin: 'left center' }} />
           </Link>
-          {pathname !== '/' && (
-            <div className="hidden-mobile">
-              <Suspense fallback={<div style={{ width: '200px' }} />}>
-                <SearchBar />
-              </Suspense>
-            </div>
-          )}
+          <div className="hidden-mobile">
+            <Suspense fallback={<div style={{ width: '200px' }} />}>
+              <SearchBar />
+            </Suspense>
+          </div>
         </div>
         
         <button 
@@ -102,7 +89,7 @@ export function Navbar() {
               </button>
             </div>
           ) : (
-            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="btn-gradient" style={{ padding: '0.5rem 1.5rem', fontSize: '0.875rem' }}>
+            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
               Sign In
             </Link>
           )}
