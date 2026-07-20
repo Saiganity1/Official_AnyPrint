@@ -14,6 +14,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const search = typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : undefined;
   const category = typeof resolvedSearchParams.category === 'string' ? resolvedSearchParams.category : undefined;
   const sort = typeof resolvedSearchParams.sort === 'string' ? resolvedSearchParams.sort : 'newest';
+  const pageStr = typeof resolvedSearchParams.page === 'string' ? resolvedSearchParams.page : '1';
+  const page = parseInt(pageStr, 10) || 1;
+  const TAKE = 20;
 
   const whereClause: any = {};
   
@@ -33,15 +36,32 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   else if (sort === "price_desc") orderByClause = { price: "desc" };
   else if (sort === "bestsellers") orderByClause = { salesCount: "desc" };
 
-  const products = await prisma.product.findMany({
-    where: whereClause,
-    orderBy: orderByClause,
-    include: {
-      reviews: {
-        select: { rating: true }
+  const [totalProducts, products] = await Promise.all([
+    prisma.product.count({ where: whereClause }),
+    prisma.product.findMany({
+      where: whereClause,
+      orderBy: orderByClause,
+      take: TAKE,
+      skip: (page - 1) * TAKE,
+      include: {
+        reviews: {
+          select: { rating: true }
+        }
       }
-    }
-  });
+    })
+  ]);
+
+  const totalPages = Math.ceil(totalProducts / TAKE);
+  
+  const buildPageUrl = (p: number) => {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (category) params.set("category", category);
+    if (sort && sort !== "newest") params.set("sort", sort);
+    if (p > 1) params.set("page", p.toString());
+    const query = params.toString();
+    return `/products${query ? `?${query}` : ''}`;
+  };
 
   return (
     <div className="container animate-fade-in" style={{ padding: '4rem 1.5rem', minHeight: 'calc(100vh - 80px)' }}>
@@ -92,7 +112,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
           {/* Header & Sort */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', background: 'var(--background-secondary)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
             <div style={{ color: 'var(--foreground-muted)' }}>
-              Showing {products.length} product{products.length !== 1 ? 's' : ''}
+              Showing {products.length > 0 ? (page - 1) * TAKE + 1 : 0} - {Math.min(page * TAKE, totalProducts)} of {totalProducts} product{totalProducts !== 1 ? 's' : ''}
             </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -110,6 +130,46 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginTop: '3rem' }}>
+              {page > 1 ? (
+                <Link href={buildPageUrl(page - 1)} className="btn-secondary" style={{ padding: '0.5rem 1rem' }}>Previous</Link>
+              ) : (
+                <span className="btn-secondary" style={{ padding: '0.5rem 1rem', opacity: 0.5, cursor: 'not-allowed' }}>Previous</span>
+              )}
+
+              <div style={{ display: 'flex', gap: '0.25rem' }}>
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const pageNum = i + 1;
+                  const isActive = pageNum === page;
+                  return (
+                    <Link
+                      key={pageNum}
+                      href={buildPageUrl(pageNum)}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        borderRadius: 'var(--radius-sm)',
+                        background: isActive ? 'var(--primary)' : 'var(--background-secondary)',
+                        color: isActive ? 'white' : 'var(--foreground)',
+                        fontWeight: isActive ? '600' : '400',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      {pageNum}
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {page < totalPages ? (
+                <Link href={buildPageUrl(page + 1)} className="btn-secondary" style={{ padding: '0.5rem 1rem' }}>Next</Link>
+              ) : (
+                <span className="btn-secondary" style={{ padding: '0.5rem 1rem', opacity: 0.5, cursor: 'not-allowed' }}>Next</span>
+              )}
             </div>
           )}
         </div>

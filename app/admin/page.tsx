@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 
 const SalesCharts = dynamic(
   () => import("@/components/SalesCharts").then((mod) => mod.SalesCharts),
-  { ssr: false, loading: () => <div className="skeleton" style={{ height: "400px", width: "100%", borderRadius: "var(--radius-lg)" }}></div> }
+  { loading: () => <div className="skeleton" style={{ height: "400px", width: "100%", borderRadius: "var(--radius-lg)" }}></div> }
 );
 
 export default async function AdminDashboard() {
