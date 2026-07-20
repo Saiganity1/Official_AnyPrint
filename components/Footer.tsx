@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -40,14 +40,6 @@ export function Footer() {
               color: 'var(--foreground)', transition: 'all 0.2s'
             }}>
               <Instagram size={20} />
-            </Link>
-            <Link href="#" style={{ 
-              display: 'flex', alignItems: 'center', justifyContent: 'center', 
-              width: '40px', height: '40px', borderRadius: '50%', 
-              background: 'var(--background)', border: '1px solid var(--border)',
-              color: 'var(--foreground)', transition: 'all 0.2s'
-            }}>
-              <Twitter size={20} />
             </Link>
           </div>
         </div>
