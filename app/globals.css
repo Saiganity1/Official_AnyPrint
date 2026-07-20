@@ -264,6 +264,21 @@ input, textarea, select {
   animation: float-orb-3 12s ease-in-out infinite alternate;
 }
 
+/* Navbar Hover Effects */
+.nav-item {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: rgba(0, 174, 239, 0.1);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
 /* ==========================================================================
    FOOTER PREMIUM HOVER EFFECTS
    ========================================================================== */
