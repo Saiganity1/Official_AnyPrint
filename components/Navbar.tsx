@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { ShoppingCart, User, LogOut, Package } from "lucide-react";
+import { ShoppingCart, User, LogOut, Package, Menu, X } from "lucide-react";
 import { SearchBar } from "./SearchBar";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useCart } from "./CartContext";
 
 export function Navbar() {
   const { data: session } = useSession();
   const { openCart, items } = useCart();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <nav className="navbar">
@@ -26,10 +27,17 @@ export function Navbar() {
           </div>
         </div>
         
-        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-          <Link href="/products" style={{ fontWeight: '500' }}>Products</Link>
+        <button 
+          className="mobile-menu-btn" 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        <div className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
+          <Link href="/products" style={{ fontWeight: '500' }} onClick={() => setIsMobileMenuOpen(false)}>Products</Link>
           
-          <button onClick={openCart} suppressHydrationWarning style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'transparent', color: 'inherit', position: 'relative' }}>
+          <button onClick={() => { openCart(); setIsMobileMenuOpen(false); }} suppressHydrationWarning style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'transparent', color: 'inherit', position: 'relative', border: 'none', cursor: 'pointer', padding: 0 }}>
             <ShoppingCart size={20} />
             <span style={{ fontSize: '0.875rem', fontWeight: '600' }}>Cart</span>
             {items.length > 0 && (
@@ -52,19 +60,19 @@ export function Navbar() {
           </button>
 
           {session ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               {(session.user as any)?.role === 'ADMIN' || (session.user as any)?.role === 'OWNER' ? (
-                <Link href="/admin" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)' }}>
+                <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)' }}>
                   <Package size={20} />
                   <span style={{ fontSize: '0.875rem', fontWeight: '600' }}>Dashboard</span>
                 </Link>
               ) : null}
               
-              <Link href="/orders" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginRight: '0.5rem' }}>
+              <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginRight: '0.5rem' }}>
                 <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>My Orders</span>
               </Link>
               
-              <Link href="/profile" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', color: 'inherit' }}>
+              <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', color: 'inherit' }}>
                 {session.user?.image ? (
                   <div style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '50%', overflow: 'hidden', border: '2px solid var(--border)', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -76,12 +84,12 @@ export function Navbar() {
                 <span style={{ fontSize: '1rem', fontWeight: '500', whiteSpace: 'nowrap' }}>{session.user?.name || "User"}</span>
               </Link>
               
-              <button onClick={() => signOut()} suppressHydrationWarning style={{ background: 'transparent', color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <button onClick={() => { signOut(); setIsMobileMenuOpen(false); }} suppressHydrationWarning style={{ background: 'transparent', color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', border: 'none', cursor: 'pointer', padding: 0 }}>
                 <LogOut size={18} />
               </button>
             </div>
           ) : (
-            <Link href="/login" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
+            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
               Sign In
             </Link>
           )}

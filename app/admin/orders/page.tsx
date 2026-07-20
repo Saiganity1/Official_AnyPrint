@@ -19,8 +19,8 @@ export default async function AdminOrdersPage() {
         <h1 style={{ fontSize: '2rem' }}>Orders</h1>
       </div>
 
-      <div className="glass-card" style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+      <div className="glass-card table-responsive">
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--foreground-muted)' }}>
               <th style={{ padding: '1rem', fontWeight: '500' }}>Order ID</th>

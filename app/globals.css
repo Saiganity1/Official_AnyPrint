@@ -263,3 +263,130 @@ input, textarea, select {
 .animate-orb-3 {
   animation: float-orb-3 12s ease-in-out infinite alternate;
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS OVERRIDES
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Hide Desktop Elements */
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Show Mobile Elements */
+  .mobile-only {
+    display: block !important;
+  }
+
+  .mobile-menu-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--foreground);
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
+  /* Navbar Mobile Layout */
+  .nav-links {
+    display: none !important;
+  }
+
+  .nav-links.open {
+    display: flex !important;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--background);
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    z-index: 50;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  /* Smart Typography */
+  .hero-title {
+    font-size: 2.5rem !important;
+  }
+
+  .hero-subtitle {
+    font-size: 1.125rem !important;
+  }
+
+  /* Products Page Layout */
+  .products-layout {
+    flex-direction: column !important;
+  }
+
+  .products-sidebar {
+    width: 100% !important;
+    margin-bottom: 1rem;
+  }
+
+  .products-sidebar ul {
+    flex-direction: row !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+
+  .products-sidebar ul li {
+    flex-shrink: 0;
+  }
+}
+
+/* Base Classes (Desktop Defaults) */
+.mobile-only {
+  display: none !important;
+}
+
+.mobile-menu-btn {
+  display: none !important;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.hero-title {
+  font-size: 4.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--foreground-muted);
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+}
+
+.products-layout {
+  display: flex;
+  gap: 2rem;
+  flex-direction: row;
+}
+
+.products-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

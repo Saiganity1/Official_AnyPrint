@@ -142,14 +142,15 @@ export default async function Home() {
         <div className="container animate-fade-in" style={{ position: 'relative', zIndex: 10 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
             {/* Left Column - Text */}
-            <div style={{ textAlign: 'left' }}>
-              <h1 style={{ fontSize: '4.5rem', marginBottom: '1.5rem', lineHeight: '1.1' }}>
-                Wear Your <span className="text-gradient">Imagination</span>
-              </h1>
-              <h2 style={{ fontSize: '1.25rem', marginBottom: '2.5rem', color: 'var(--foreground-muted)', fontWeight: '400', maxWidth: '600px' }}>
-                Premium custom apparel and high-quality printing services tailored exactly to your brand's unique identity.
-              </h2>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ flex: '1', zIndex: 1 }}>
+          <h1 className="hero-title">
+            Wear Your <span className="text-gradient">Imagination.</span>
+          </h1>
+          <p className="hero-subtitle">
+            Premium custom apparel printed with state-of-the-art technology. 
+            From single shirts to bulk orders, we bring your designs to life.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <Link href="/products" className="btn-primary" style={{ fontSize: '1.125rem', padding: '1rem 2rem' }}>
                   Shop Now
                 </Link>

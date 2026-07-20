@@ -75,9 +75,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
         {search && <p style={{ marginTop: '1rem', color: 'var(--primary)' }}>Showing results for &quot;{search}&quot;</p>}
       </div>
 
-      <div style={{ display: 'flex', gap: '2rem', flexDirection: 'row', flexWrap: 'wrap' }}>
+      <div className="products-layout">
         {/* Sidebar */}
-        <aside style={{ width: '250px', flexShrink: 0 }}>
+        <aside className="products-sidebar">
           <div className="glass-card" style={{ padding: '1.5rem' }}>
             <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Categories</h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
