@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./Providers";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { ProductChatWidget } from "@/components/ProductChatWidget";
 
 import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
@@ -24,8 +25,13 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body>
         <Providers>
-          <Navbar />
-          {children}
+          <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <Navbar />
+            <main style={{ flex: '1' }}>
+              {children}
+            </main>
+            <Footer />
+          </div>
           <ProfileCompletionModal />
           <ProductChatWidget />
         </Providers>
