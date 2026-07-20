@@ -265,6 +265,43 @@ input, textarea, select {
 }
 
 /* ==========================================================================
+   FOOTER PREMIUM HOVER EFFECTS
+   ========================================================================== */
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 174, 239, 0.3);
+}
+
+.footer-link {
+  color: var(--foreground-muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-link:hover {
+  color: var(--primary);
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
    MOBILE RESPONSIVENESS OVERRIDES
    ========================================================================== */
 

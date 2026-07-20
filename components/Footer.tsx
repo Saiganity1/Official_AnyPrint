@@ -25,20 +25,10 @@ export function Footer() {
             Wear Your Imagination. Premium custom apparel and high-quality printing services tailored exactly to your brand&apos;s unique identity.
           </p>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <Link href="#" style={{ 
-              display: 'flex', alignItems: 'center', justifyContent: 'center', 
-              width: '40px', height: '40px', borderRadius: '50%', 
-              background: 'var(--background)', border: '1px solid var(--border)',
-              color: 'var(--foreground)', transition: 'all 0.2s'
-            }}>
+            <Link href="#" className="social-icon">
               <Globe size={20} />
             </Link>
-            <Link href="#" style={{ 
-              display: 'flex', alignItems: 'center', justifyContent: 'center', 
-              width: '40px', height: '40px', borderRadius: '50%', 
-              background: 'var(--background)', border: '1px solid var(--border)',
-              color: 'var(--foreground)', transition: 'all 0.2s'
-            }}>
+            <Link href="#" className="social-icon">
               <MessageCircle size={20} />
             </Link>
           </div>
@@ -48,10 +38,10 @@ export function Footer() {
         <div>
           <h4 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: '600' }}>Quick Links</h4>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <li><Link href="/products" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>Shop All Products</Link></li>
-            <li><Link href="/products?category=T-Shirts" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>Custom T-Shirts</Link></li>
-            <li><Link href="/products?category=Hoodies" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>Premium Hoodies</Link></li>
-            <li><Link href="/login" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>My Account</Link></li>
+            <li><Link href="/products" className="footer-link">Shop All Products</Link></li>
+            <li><Link href="/products?category=T-Shirts" className="footer-link">Custom T-Shirts</Link></li>
+            <li><Link href="/products?category=Hoodies" className="footer-link">Premium Hoodies</Link></li>
+            <li><Link href="/login" className="footer-link">My Account</Link></li>
           </ul>
         </div>
 
@@ -59,10 +49,10 @@ export function Footer() {
         <div>
           <h4 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: '600' }}>Customer Care</h4>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <li><Link href="#" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>Track Order</Link></li>
-            <li><Link href="#" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>Return Policy</Link></li>
-            <li><Link href="#" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>Privacy Policy</Link></li>
-            <li><Link href="#" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>Terms of Service</Link></li>
+            <li><Link href="#" className="footer-link">Track Order</Link></li>
+            <li><Link href="#" className="footer-link">Return Policy</Link></li>
+            <li><Link href="#" className="footer-link">Privacy Policy</Link></li>
+            <li><Link href="#" className="footer-link">Terms of Service</Link></li>
           </ul>
         </div>
 
