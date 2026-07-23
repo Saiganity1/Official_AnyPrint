@@ -41,6 +41,17 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
   const displayPrice = selectedVariant?.price ?? product.price;
   const displayStock = selectedVariant ? selectedVariant.stock : product.stock;
 
+  // Calculate price range like Shopee
+  let minPrice = product.price;
+  let maxPrice = product.price;
+  if (hasVariants) {
+    const allPrices = [product.price, ...product.variants.map((v: any) => v.price)].filter((p: any) => p != null && p > 0);
+    if (allPrices.length > 0) {
+      minPrice = Math.min(...allPrices);
+      maxPrice = Math.max(...allPrices);
+    }
+  }
+
   const needsColor = colors.length > 0 && !selectedColor;
   const needsSize = sizes.length > 0 && !selectedSize;
   const isSelectionComplete = !hasVariants || (!needsColor && !needsSize && selectedVariant);
@@ -105,7 +116,15 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
       <div style={{ flex: '1 1 50%', minWidth: '300px', padding: '3rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{product.name}</h1>
         
-        <p style={{ fontSize: '2rem', color: 'var(--primary)', fontWeight: '700', marginBottom: '2rem' }}>₱{displayPrice.toFixed(2)}</p>
+        {hasVariants && !isSelectionComplete && minPrice !== maxPrice ? (
+          <p style={{ fontSize: '2rem', color: 'var(--primary)', fontWeight: '700', marginBottom: '2rem' }}>
+            ₱{minPrice.toFixed(2)} - ₱{maxPrice.toFixed(2)}
+          </p>
+        ) : (
+          <p style={{ fontSize: '2rem', color: 'var(--primary)', fontWeight: '700', marginBottom: '2rem' }}>
+            ₱{displayPrice.toFixed(2)}
+          </p>
+        )}
         
         <div style={{ marginBottom: '2rem' }}>
           <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Description</h3>
