@@ -48,7 +48,8 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
   const isSelectionComplete = !hasVariants || (!needsColor && !needsSize && selectedVariant);
 
   return (
-    <div className="glass-card" style={{ display: 'flex', flexWrap: 'wrap', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div className="glass-card" style={{ display: 'flex', flexWrap: 'wrap', overflow: 'hidden' }}>
       {/* LEFT: Gallery */}
       <div style={{ flex: '1 1 50%', minWidth: '300px', backgroundColor: 'var(--background-secondary)', display: 'flex', flexDirection: 'column' }}>
         <div 
@@ -111,10 +112,6 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
           </p>
         )}
         
-        <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Description</h3>
-          <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>{product.description}</p>
-        </div>
 
         {hasVariants && (
           <div style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -189,6 +186,17 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
             </button>
           )}
           <AskQuestionButton product={product} />
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
+        <div className="glass-card" style={{ flex: '1 1 60%', padding: '2.5rem', minWidth: '300px' }}>
+          <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', color: 'var(--primary)' }}>Product Description</h3>
+          <p style={{ color: 'var(--foreground)', lineHeight: '1.8', whiteSpace: 'pre-wrap', fontSize: '0.95rem' }}>{product.description}</p>
+        </div>
+        <div className="glass-card" style={{ flex: '1 1 35%', padding: '2.5rem', minWidth: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--background-secondary)', border: '1px dashed var(--border)' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--foreground-muted)' }}>Customer Feedback</h3>
+          <p style={{ color: 'var(--foreground-muted)', fontSize: '0.875rem', textAlign: 'center' }}>Ratings and reviews will be displayed here soon.</p>
         </div>
       </div>
     </div>
