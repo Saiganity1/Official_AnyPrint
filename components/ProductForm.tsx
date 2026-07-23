@@ -42,9 +42,20 @@ export function ProductForm({ initialData }: ProductFormProps) {
   });
 
   const [variants, setVariants] = useState<any[]>(initialData?.variants || []);
+  const [expandedVariants, setExpandedVariants] = useState<number[]>([]);
 
   const addVariant = () => {
+    const newIndex = variants.length;
     setVariants([...variants, { color: "", size: "", stock: 0, price: "", sku: "", imageUrl: null }]);
+    setExpandedVariants([...expandedVariants, newIndex]);
+  };
+
+  const toggleVariant = (index: number) => {
+    if (expandedVariants.includes(index)) {
+      setExpandedVariants(expandedVariants.filter(i => i !== index));
+    } else {
+      setExpandedVariants([...expandedVariants, index]);
+    }
   };
 
   const updateVariant = (index: number, field: string, value: any) => {
@@ -255,38 +266,67 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {variants.map((variant, index) => (
-            <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--background)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', position: 'relative', paddingRight: '2.5rem' }}>
-                <div style={{ flex: '1 1 120px' }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Color</label>
-                  <input placeholder="e.g. Red" value={variant.color || ''} onChange={e => updateVariant(index, 'color', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+            <div key={index} style={{ background: 'var(--background)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+              
+              {/* Accordion Header */}
+              <div 
+                onClick={() => toggleVariant(index)}
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'var(--background-secondary)', cursor: 'pointer' }}
+              >
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <svg 
+                    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                    style={{ transform: expandedVariants.includes(index) ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s', color: 'var(--foreground-muted)' }}
+                  >
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                  <span style={{ fontWeight: '600' }}>
+                    {variant.color || variant.size ? `${variant.color || 'Any Color'} - ${variant.size || 'Any Size'}` : `New Variant ${index + 1}`}
+                  </span>
                 </div>
-                <div style={{ flex: '1 1 120px' }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Specific Size</label>
-                  <input placeholder="e.g. Size M" value={variant.size || ''} onChange={e => updateVariant(index, 'size', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                  <span style={{ fontSize: '0.875rem', color: 'var(--foreground-muted)' }}>
+                    Stock: {variant.stock} | ₱{variant.price || '0.00'}
+                  </span>
+                  <button type="button" onClick={(e) => { e.stopPropagation(); removeVariant(index); }} style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', cursor: 'pointer', width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', lineHeight: 1 }} title="Remove Variant">
+                    &times;
+                  </button>
                 </div>
-                <div style={{ flex: '1 1 80px' }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Stock</label>
-                  <input type="number" placeholder="0" min="0" value={variant.stock} onChange={e => updateVariant(index, 'stock', Number(e.target.value))} className="input-field" style={{ padding: '0.5rem', width: '100%' }} required />
-                </div>
-                <div style={{ flex: '1 1 140px' }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Price (₱)</label>
-                  <input type="number" placeholder="0.00" min="0" value={variant.price || ''} onChange={e => updateVariant(index, 'price', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
-                </div>
-                <button type="button" onClick={() => removeVariant(index)} style={{ position: 'absolute', right: '0.5rem', top: '1.5rem', background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1.25rem', width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Remove">
-                  &times;
-                </button>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: '500' }}>Variant Image:</span>
-                {variant.imageUrl && (
-                  <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={variant.imageUrl} alt="Variant" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+
+              {/* Collapsible Content */}
+              {expandedVariants.includes(index) && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem', borderTop: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', position: 'relative' }}>
+                    <div style={{ flex: '1 1 120px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Color</label>
+                      <input placeholder="e.g. Red" value={variant.color || ''} onChange={e => updateVariant(index, 'color', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+                    </div>
+                    <div style={{ flex: '1 1 120px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Specific Size</label>
+                      <input placeholder="e.g. Size M" value={variant.size || ''} onChange={e => updateVariant(index, 'size', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+                    </div>
+                    <div style={{ flex: '1 1 80px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Stock</label>
+                      <input type="number" placeholder="0" min="0" value={variant.stock} onChange={e => updateVariant(index, 'stock', Number(e.target.value))} className="input-field" style={{ padding: '0.5rem', width: '100%' }} required />
+                    </div>
+                    <div style={{ flex: '1 1 140px' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Price (₱)</label>
+                      <input type="number" placeholder="0.00" min="0" value={variant.price || ''} onChange={e => updateVariant(index, 'price', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+                    </div>
                   </div>
-                )}
-                <input type="file" accept="image/*" onChange={(e) => handleVariantImageSelect(index, e)} className="input-field" style={{ padding: '0.25rem', fontSize: '0.75rem' }} />
-              </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '500' }}>Variant Image:</span>
+                    {variant.imageUrl && (
+                      <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={variant.imageUrl} alt="Variant" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    )}
+                    <input type="file" accept="image/*" onChange={(e) => handleVariantImageSelect(index, e)} className="input-field" style={{ padding: '0.25rem', fontSize: '0.75rem' }} />
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
