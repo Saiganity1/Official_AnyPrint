@@ -256,12 +256,24 @@ export function ProductForm({ initialData }: ProductFormProps) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {variants.map((variant, index) => (
             <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--background)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <input placeholder="Color (e.g. Red)" value={variant.color || ''} onChange={e => updateVariant(index, 'color', e.target.value)} className="input-field" style={{ padding: '0.5rem', flex: 1 }} />
-                <input placeholder="Specific Size (e.g. Size M)" value={variant.size || ''} onChange={e => updateVariant(index, 'size', e.target.value)} className="input-field" style={{ padding: '0.5rem', flex: 1.5 }} />
-                <input type="number" placeholder="Stock" min="0" value={variant.stock} onChange={e => updateVariant(index, 'stock', Number(e.target.value))} className="input-field" style={{ padding: '0.5rem', width: '80px' }} required />
-                <input type="number" placeholder="Price for this Size (₱)" min="0" value={variant.price || ''} onChange={e => updateVariant(index, 'price', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '160px' }} />
-                <button type="button" onClick={() => removeVariant(index)} style={{ padding: '0.5rem', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1.25rem', lineHeight: 1 }} title="Remove">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', position: 'relative', paddingRight: '2.5rem' }}>
+                <div style={{ flex: '1 1 120px' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Color</label>
+                  <input placeholder="e.g. Red" value={variant.color || ''} onChange={e => updateVariant(index, 'color', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+                </div>
+                <div style={{ flex: '1 1 120px' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Specific Size</label>
+                  <input placeholder="e.g. Size M" value={variant.size || ''} onChange={e => updateVariant(index, 'size', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+                </div>
+                <div style={{ flex: '1 1 80px' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Stock</label>
+                  <input type="number" placeholder="0" min="0" value={variant.stock} onChange={e => updateVariant(index, 'stock', Number(e.target.value))} className="input-field" style={{ padding: '0.5rem', width: '100%' }} required />
+                </div>
+                <div style={{ flex: '1 1 140px' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Price (₱)</label>
+                  <input type="number" placeholder="0.00" min="0" value={variant.price || ''} onChange={e => updateVariant(index, 'price', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+                </div>
+                <button type="button" onClick={() => removeVariant(index)} style={{ position: 'absolute', right: '0.5rem', top: '1.5rem', background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1.25rem', width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Remove">
                   &times;
                 </button>
               </div>
