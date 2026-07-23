@@ -67,26 +67,40 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
   const [expandedVariants, setExpandedVariants] = useState<number[]>([]);
   const [showGlobalSize, setShowGlobalSize] = useState(false);
-  const [globalSizeForm, setGlobalSizeForm] = useState({ size: "", stock: 0, price: "" });
+  const [globalSizeForm, setGlobalSizeForm] = useState({ size: "" });
+
+  const [availableSizes, setAvailableSizes] = useState<string[]>(() => {
+    const sizes = new Set<string>();
+    const flatVariants = initialData?.variants || [];
+    flatVariants.forEach((v: any) => {
+      if (v.size) sizes.add(v.size);
+    });
+    return Array.from(sizes);
+  });
 
   const applyGlobalSize = () => {
     if (variantGroups.length === 0) {
       setError("Please add at least one Variant Group first.");
       return;
     }
-    if (!globalSizeForm.size.trim()) {
+    const sizeName = globalSizeForm.size.trim();
+    if (!sizeName) {
       setError("Please enter a specific size (e.g. XXL).");
       return;
     }
 
+    if (!availableSizes.includes(sizeName)) {
+      setAvailableSizes([...availableSizes, sizeName]);
+    }
+
     const newGroups = variantGroups.map(group => ({
       ...group,
-      sizes: [...group.sizes, { ...globalSizeForm }]
+      sizes: [...group.sizes, { size: sizeName, stock: 0, price: "" }]
     }));
     
     setVariantGroups(newGroups);
     setShowGlobalSize(false);
-    setGlobalSizeForm({ size: "", stock: 0, price: "" });
+    setGlobalSizeForm({ size: "" });
     setError("");
   };
 
@@ -370,22 +384,17 @@ export function ProductForm({ initialData }: ProductFormProps) {
         
         {showGlobalSize && (
           <div style={{ padding: '1rem', background: 'var(--background)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', marginBottom: '1rem' }}>
-            <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem' }}>Add Size to All Groups</h4>
+            <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem' }}>Define Global Size</h4>
+            <p style={{ fontSize: '0.75rem', color: 'var(--foreground-muted)', marginBottom: '1rem' }}>
+              This will add a new Size option to your dropdowns AND instantly add it to all existing Color groups.
+            </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'flex-end' }}>
-              <div style={{ flex: '1 1 120px' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Specific Size</label>
-                <input placeholder="e.g. XXL" value={globalSizeForm.size} onChange={e => setGlobalSizeForm({...globalSizeForm, size: e.target.value})} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
-              </div>
-              <div style={{ flex: '1 1 80px' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Stock</label>
-                <input type="number" placeholder="0" min="0" value={globalSizeForm.stock} onChange={e => setGlobalSizeForm({...globalSizeForm, stock: Number(e.target.value)})} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
-              </div>
-              <div style={{ flex: '1 1 140px' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Price (₱)</label>
-                <input type="number" placeholder="0.00" min="0" value={globalSizeForm.price} onChange={e => setGlobalSizeForm({...globalSizeForm, price: e.target.value})} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+              <div style={{ flex: '1 1 200px' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Size Name</label>
+                <input placeholder="e.g. XXL, Size 10" value={globalSizeForm.size} onChange={e => setGlobalSizeForm({ size: e.target.value })} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
               </div>
               <button type="button" onClick={applyGlobalSize} className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
-                Apply to All
+                Add to All Groups
               </button>
               <button type="button" onClick={() => setShowGlobalSize(false)} className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
                 Cancel
@@ -473,7 +482,21 @@ export function ProductForm({ initialData }: ProductFormProps) {
                       <div key={sizeIndex} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', position: 'relative', paddingRight: '2.5rem', alignItems: 'flex-end', borderBottom: sizeIndex !== group.sizes.length - 1 ? '1px dashed var(--border)' : 'none', paddingBottom: sizeIndex !== group.sizes.length - 1 ? '0.75rem' : '0' }}>
                         <div style={{ flex: '1 1 120px' }}>
                           <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Specific Size</label>
-                          <input placeholder="e.g. Size M" value={size.size} onChange={e => updateVariantSize(groupIndex, sizeIndex, 'size', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+                          <select 
+                            value={size.size} 
+                            onChange={e => updateVariantSize(groupIndex, sizeIndex, 'size', e.target.value)} 
+                            className="input-field" 
+                            style={{ padding: '0.5rem', width: '100%' }}
+                          >
+                            <option value="">Select Size...</option>
+                            {availableSizes.map(sz => (
+                              <option key={sz} value={sz}>{sz}</option>
+                            ))}
+                            {/* In case they had a size from DB that isn't in availableSizes somehow */}
+                            {size.size && !availableSizes.includes(size.size) && (
+                              <option value={size.size}>{size.size}</option>
+                            )}
+                          </select>
                         </div>
                         <div style={{ flex: '1 1 80px' }}>
                           <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Stock</label>
