@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function UserRoleDropdown({ userId, initialRole }: { userId: string, initialRole: string }) {
+export function UserRoleDropdown({ userId, initialRole, userEmail }: { userId: string, initialRole: string, userEmail: string | null }) {
   const [role, setRole] = useState(initialRole);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  if (initialRole === "OWNER") {
+  if (userEmail === "sicatmichaeldave0411@gmail.com") {
     return <span style={{ padding: '0.25rem 0.5rem', background: 'var(--primary)', color: 'white', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold' }}>OWNER</span>;
   }
 
@@ -55,6 +55,7 @@ export function UserRoleDropdown({ userId, initialRole }: { userId: string, init
     >
       <option value="USER">USER</option>
       <option value="ADMIN">ADMIN</option>
+      <option value="OWNER">OWNER</option>
     </select>
   );
 }

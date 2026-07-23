@@ -46,7 +46,7 @@ export default async function AdminUsersPage() {
                   {new Date(user.createdAt).toLocaleDateString()}
                 </td>
                 <td style={{ padding: '1rem' }}>
-                  <UserRoleDropdown userId={user.id} initialRole={user.role} />
+                  <UserRoleDropdown userId={user.id} initialRole={user.role} userEmail={user.email} />
                 </td>
                 <td style={{ padding: '1rem' }}>
                   {user.role !== "OWNER" ? (

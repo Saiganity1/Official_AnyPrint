@@ -15,7 +15,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const resolvedParams = await params;
     const { newRole } = await req.json();
 
-    if (!newRole || !['USER', 'ADMIN'].includes(newRole)) {
+    if (!newRole || !['USER', 'ADMIN', 'OWNER'].includes(newRole)) {
       return new NextResponse("Valid role is required", { status: 400 });
     }
 
@@ -28,8 +28,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return new NextResponse("User not found", { status: 404 });
     }
 
-    if (targetUser.role === "OWNER") {
-      return new NextResponse("Cannot modify an Owner's role", { status: 403 });
+    if (targetUser.email === "sicatmichaeldave0411@gmail.com") {
+      return new NextResponse("Cannot modify the original System Owner's role", { status: 403 });
     }
 
     const user = await prisma.user.update({
