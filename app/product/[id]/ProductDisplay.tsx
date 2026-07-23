@@ -8,6 +8,15 @@ import { AskQuestionButton } from "@/components/AskQuestionButton";
 export function ProductDisplay({ product, allImages }: { product: any, allImages: string[] }) {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setMousePosition({ x, y });
+  };
 
   const hasVariants = product.variants && product.variants.length > 0;
   
@@ -40,9 +49,25 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
     <div className="glass-card" style={{ display: 'flex', flexWrap: 'wrap', overflow: 'hidden' }}>
       {/* LEFT: Gallery */}
       <div style={{ flex: '1 1 50%', minWidth: '300px', backgroundColor: 'var(--background-secondary)', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
+        <div 
+          style={{ position: 'relative', width: '100%', paddingTop: '100%', overflow: 'hidden', cursor: isZoomed ? 'zoom-out' : 'zoom-in', borderRadius: 'var(--radius-md) var(--radius-md) 0 0' }}
+          onMouseEnter={() => setIsZoomed(true)}
+          onMouseLeave={() => setIsZoomed(false)}
+          onMouseMove={handleMouseMove}
+        >
           {displayImage ? (
-            <Image src={displayImage} alt={product.name} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
+            <Image 
+              src={displayImage} 
+              alt={product.name} 
+              fill 
+              sizes="(max-width: 768px) 100vw, 50vw" 
+              style={{ 
+                objectFit: 'cover',
+                transform: isZoomed ? 'scale(2.5)' : 'scale(1)',
+                transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
+                transition: isZoomed ? 'none' : 'transform 0.3s ease'
+              }} 
+            />
           ) : (
             <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--foreground-muted)' }}>
               No Image Available
