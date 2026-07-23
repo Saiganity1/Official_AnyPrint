@@ -188,6 +188,21 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.name.trim()) return setError("Product Name is required.");
+    if (!formData.description.trim()) return setError("Description is required.");
+    if (formData.price === "" || Number(formData.price) < 0) return setError("Valid Base Price is required.");
+    if (variantGroups.length === 0 && (formData.stock === "" || Number(formData.stock) < 0)) return setError("Valid Base Stock is required.");
+
+    for (let i = 0; i < variantGroups.length; i++) {
+      for (let j = 0; j < variantGroups[i].sizes.length; j++) {
+        const s = variantGroups[i].sizes[j];
+        if (s.stock === "" || Number(s.stock) < 0) {
+          return setError(`Stock is required for all variant sizes (Group ${i + 1}, Size ${j + 1}).`);
+        }
+      }
+    }
+
     setIsLoading(true);
     setError("");
 
@@ -283,7 +298,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
       <div style={{ display: 'flex', gap: '1.5rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 2 }}>
           <label htmlFor="name" style={{ fontWeight: '500' }}>Product Name</label>
-          <input required id="name" name="name" value={formData.name} onChange={handleChange} className="input-field" placeholder="e.g. YALEX PLAIN SHIRT Red" />
+          <input id="name" name="name" value={formData.name} onChange={handleChange} className="input-field" placeholder="e.g. YALEX PLAIN SHIRT Red" />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
           <label htmlFor="category" style={{ fontWeight: '500' }}>Category</label>
@@ -297,18 +312,18 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         <label htmlFor="description" style={{ fontWeight: '500' }}>Description</label>
-        <textarea required id="description" name="description" value={formData.description} onChange={handleChange} className="input-field" rows={4} placeholder="Product description..." />
+        <textarea id="description" name="description" value={formData.description} onChange={handleChange} className="input-field" rows={4} placeholder="Product description..." />
       </div>
 
       <div style={{ display: 'flex', gap: '1.5rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
           <label htmlFor="price" style={{ fontWeight: '500' }}>Base Price (₱)</label>
-          <input required type="number" step="0.01" min="0" id="price" name="price" value={formData.price} onChange={handleChange} className="input-field" />
+          <input type="number" step="0.01" min="0" id="price" name="price" value={formData.price} onChange={handleChange} className="input-field" />
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
           <label htmlFor="stock" style={{ fontWeight: '500' }}>Base Stock</label>
-          <input required type="number" min="0" id="stock" name="stock" value={formData.stock} onChange={handleChange} className="input-field" disabled={variantGroups.length > 0} />
+          <input type="number" min="0" id="stock" name="stock" value={formData.stock} onChange={handleChange} className="input-field" disabled={variantGroups.length > 0} />
         </div>
       </div>
 
@@ -406,7 +421,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
                         </div>
                         <div style={{ flex: '1 1 80px' }}>
                           <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Stock</label>
-                          <input type="number" placeholder="0" min="0" value={size.stock} onChange={e => updateVariantSize(groupIndex, sizeIndex, 'stock', Number(e.target.value))} className="input-field" style={{ padding: '0.5rem', width: '100%' }} required />
+                          <input type="number" placeholder="0" min="0" value={size.stock} onChange={e => updateVariantSize(groupIndex, sizeIndex, 'stock', Number(e.target.value))} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
                         </div>
                         <div style={{ flex: '1 1 140px' }}>
                           <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Price for this Size (₱)</label>
