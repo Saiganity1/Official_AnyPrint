@@ -83,18 +83,27 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {CATEGORIES.map(cat => {
                 const isActive = (category === cat) || (!category && cat === "All");
+                
+                const buildCategoryUrl = () => {
+                  const params = new URLSearchParams();
+                  if (search) params.set("search", search);
+                  if (sort && sort !== "newest") params.set("sort", sort);
+                  if (cat !== "All") params.set("category", cat);
+                  const query = params.toString();
+                  return `/products${query ? `?${query}` : ''}`;
+                };
+
                 return (
                   <li key={cat}>
                     <Link 
-                      href={`/products?${search ? `search=${search}&` : ''}${sort && sort !== 'newest' ? `sort=${sort}&` : ''}category=${cat}`}
+                      href={buildCategoryUrl()}
+                      className={`category-link ${isActive ? 'active' : ''}`}
                       style={{ 
                         display: 'block', 
-                        padding: '0.5rem', 
+                        padding: '0.75rem 1rem', 
                         borderRadius: 'var(--radius-sm)',
-                        color: isActive ? 'var(--primary)' : 'var(--foreground-muted)',
-                        background: isActive ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                        fontWeight: isActive ? '600' : '400',
-                        textDecoration: 'none'
+                        textDecoration: 'none',
+                        transition: 'all 0.2s ease'
                       }}
                     >
                       {cat}

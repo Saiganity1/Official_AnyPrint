@@ -433,6 +433,21 @@ input, textarea, select {
   flex-shrink: 0;
 }
 
+.category-link {
+  color: var(--foreground-muted);
+}
+
+.category-link:hover {
+  background: rgba(59, 130, 246, 0.05);
+  color: var(--primary);
+}
+
+.category-link.active {
+  color: var(--primary);
+  background: rgba(59, 130, 246, 0.1);
+  font-weight: 600;
+}
+
 .table-responsive {
   width: 100%;
   overflow-x: auto;
