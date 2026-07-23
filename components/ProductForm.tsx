@@ -66,6 +66,29 @@ export function ProductForm({ initialData }: ProductFormProps) {
   });
 
   const [expandedVariants, setExpandedVariants] = useState<number[]>([]);
+  const [showGlobalSize, setShowGlobalSize] = useState(false);
+  const [globalSizeForm, setGlobalSizeForm] = useState({ size: "", stock: 0, price: "" });
+
+  const applyGlobalSize = () => {
+    if (variantGroups.length === 0) {
+      setError("Please add at least one Variant Group first.");
+      return;
+    }
+    if (!globalSizeForm.size.trim()) {
+      setError("Please enter a specific size (e.g. XXL).");
+      return;
+    }
+
+    const newGroups = variantGroups.map(group => ({
+      ...group,
+      sizes: [...group.sizes, { ...globalSizeForm }]
+    }));
+    
+    setVariantGroups(newGroups);
+    setShowGlobalSize(false);
+    setGlobalSizeForm({ size: "", stock: 0, price: "" });
+    setError("");
+  };
 
   const addVariantGroup = () => {
     const newIndex = variantGroups.length;
@@ -333,10 +356,43 @@ export function ProductForm({ initialData }: ProductFormProps) {
             <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Product Variants</h3>
             <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--foreground-muted)' }}>Optional: Add grouped variants (e.g. Color → Sizes)</p>
           </div>
-          <button type="button" onClick={addVariantGroup} className="btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>
-            + Add Variant Group
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            {variantGroups.length > 0 && (
+              <button type="button" onClick={() => setShowGlobalSize(!showGlobalSize)} className="btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>
+                + Add Size (All Groups)
+              </button>
+            )}
+            <button type="button" onClick={addVariantGroup} className="btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>
+              + Add Variant Group
+            </button>
+          </div>
         </div>
+        
+        {showGlobalSize && (
+          <div style={{ padding: '1rem', background: 'var(--background)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', marginBottom: '1rem' }}>
+            <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem' }}>Add Size to All Groups</h4>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'flex-end' }}>
+              <div style={{ flex: '1 1 120px' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Specific Size</label>
+                <input placeholder="e.g. XXL" value={globalSizeForm.size} onChange={e => setGlobalSizeForm({...globalSizeForm, size: e.target.value})} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+              </div>
+              <div style={{ flex: '1 1 80px' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Stock</label>
+                <input type="number" placeholder="0" min="0" value={globalSizeForm.stock} onChange={e => setGlobalSizeForm({...globalSizeForm, stock: Number(e.target.value)})} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+              </div>
+              <div style={{ flex: '1 1 140px' }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--foreground-muted)', display: 'block', marginBottom: '0.25rem' }}>Price (₱)</label>
+                <input type="number" placeholder="0.00" min="0" value={globalSizeForm.price} onChange={e => setGlobalSizeForm({...globalSizeForm, price: e.target.value})} className="input-field" style={{ padding: '0.5rem', width: '100%' }} />
+              </div>
+              <button type="button" onClick={applyGlobalSize} className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
+                Apply to All
+              </button>
+              <button type="button" onClick={() => setShowGlobalSize(false)} className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
         
         {variantGroups.length > 0 && (
           <div style={{ fontSize: '0.875rem', color: 'var(--primary)', marginBottom: '1rem', background: 'rgba(0,174,239,0.1)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
