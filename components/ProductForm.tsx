@@ -214,8 +214,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
     if (!formData.name.trim()) return setError("Product Name is required.");
     if (!formData.description.trim()) return setError("Description is required.");
-    if (formData.price === "" || Number(formData.price) < 0) return setError("Valid Base Price is required.");
-    if (variantGroups.length === 0 && (formData.stock === "" || Number(formData.stock) < 0)) return setError("Valid Base Stock is required.");
+    if (String(formData.price) === "" || Number(formData.price) < 0) return setError("Valid Base Price is required.");
+    if (variantGroups.length === 0 && (String(formData.stock) === "" || Number(formData.stock) < 0)) return setError("Valid Base Stock is required.");
 
     for (let i = 0; i < variantGroups.length; i++) {
       for (let j = 0; j < variantGroups[i].sizes.length; j++) {
