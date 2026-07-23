@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { ProductChatWidget } from "@/components/ProductChatWidget";
 
 import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
+import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body>
+        <NextTopLoader color="var(--primary)" showSpinner={false} height={3} />
         <Providers>
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Navbar />
