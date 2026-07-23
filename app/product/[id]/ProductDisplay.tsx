@@ -188,6 +188,7 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
           <AskQuestionButton product={product} />
         </div>
       </div>
+    </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
         <div className="glass-card" style={{ flex: '1 1 60%', padding: '2.5rem', minWidth: '300px' }}>
