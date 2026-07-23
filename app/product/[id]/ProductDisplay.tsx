@@ -8,15 +8,6 @@ import { AskQuestionButton } from "@/components/AskQuestionButton";
 export function ProductDisplay({ product, allImages }: { product: any, allImages: string[] }) {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - left) / width) * 100;
-    const y = ((e.clientY - top) / height) * 100;
-    setMousePosition({ x, y });
-  };
 
   const hasVariants = product.variants && product.variants.length > 0;
   
@@ -61,10 +52,7 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
       {/* LEFT: Gallery */}
       <div style={{ flex: '1 1 50%', minWidth: '300px', backgroundColor: 'var(--background-secondary)', display: 'flex', flexDirection: 'column' }}>
         <div 
-          style={{ position: 'relative', width: '100%', paddingTop: '100%', overflow: 'hidden', cursor: isZoomed ? 'zoom-out' : 'zoom-in', borderRadius: 'var(--radius-md) var(--radius-md) 0 0' }}
-          onMouseEnter={() => setIsZoomed(true)}
-          onMouseLeave={() => setIsZoomed(false)}
-          onMouseMove={handleMouseMove}
+          style={{ position: 'relative', width: '100%', paddingTop: '100%', overflow: 'hidden', borderRadius: 'var(--radius-md) var(--radius-md) 0 0' }}
         >
           {displayImage ? (
             <Image 
@@ -73,10 +61,7 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
               fill 
               sizes="(max-width: 768px) 100vw, 50vw" 
               style={{ 
-                objectFit: 'cover',
-                transform: isZoomed ? 'scale(2.5)' : 'scale(1)',
-                transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
-                transition: isZoomed ? 'none' : 'transform 0.3s ease'
+                objectFit: 'cover'
               }} 
             />
           ) : (

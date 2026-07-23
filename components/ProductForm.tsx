@@ -308,6 +308,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
         throw new Error(await res.text() || "Something went wrong");
       }
 
+      alert(initialData ? "Product successfully updated!" : "Product successfully created!");
+
       router.push("/admin/products");
       router.refresh();
     } catch (err: any) {
