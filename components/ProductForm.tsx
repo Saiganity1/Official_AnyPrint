@@ -25,9 +25,11 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
   const [mainFiles, setMainFiles] = useState<File[]>([]);
   // Start with existing images (main imageUrl first, then the gallery images)
-  const existingImages = initialData 
-    ? [initialData.imageUrl, ...(initialData.images?.map(i => i.url) || [])].filter(Boolean) as string[]
-    : [];
+  const [existingImages, setExistingImages] = useState<string[]>(
+    initialData 
+      ? [initialData.imageUrl, ...(initialData.images?.map(i => i.url) || [])].filter(Boolean) as string[]
+      : []
+  );
   const [imagePreviews, setImagePreviews] = useState<string[]>(existingImages);
   
   // Track variant files by group index
@@ -166,7 +168,9 @@ export function ProductForm({ initialData }: ProductFormProps) {
   const removeMainImage = (index: number) => {
     const isExistingImage = index < existingImages.length;
     if (isExistingImage) {
-      existingImages.splice(index, 1);
+      const newExisting = [...existingImages];
+      newExisting.splice(index, 1);
+      setExistingImages(newExisting);
     } else {
       const fileIndex = index - existingImages.length;
       const newFiles = [...mainFiles];
