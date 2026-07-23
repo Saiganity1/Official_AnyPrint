@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -11,7 +12,24 @@ export default function RegisterPage() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [identifierError, setIdentifierError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleIdentifierChange = (val: string) => {
+    setIdentifier(val);
+    if (!val) {
+      setIdentifierError("");
+      return;
+    }
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    const isPhone = /^09\d{9}$/.test(val) || /^\+63\d{10}$/.test(val) || /^\d{10,11}$/.test(val);
+    if (!isEmail && !isPhone) {
+      setIdentifierError("Please enter a valid email or phone number");
+    } else {
+      setIdentifierError("");
+    }
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,21 +96,34 @@ export default function RegisterPage() {
               type="text" 
               className="input-field" 
               value={identifier} 
-              onChange={(e) => setIdentifier(e.target.value)} 
+              onChange={(e) => handleIdentifierChange(e.target.value)} 
               required 
               placeholder="you@example.com or 09123456789"
+              style={{ borderColor: identifierError ? '#ef4444' : identifier && !identifierError ? '#10b981' : 'var(--border)' }}
             />
+            {identifierError && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{identifierError}</p>}
           </div>
           <div>
             <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', fontWeight: '500' }}>Password</label>
-            <input 
-              type="password" 
-              className="input-field" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-              placeholder="••••••••"
-            />
+            <div style={{ position: 'relative' }}>
+              <input 
+                type={showPassword ? "text" : "password"} 
+                className="input-field" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+                placeholder="••••••••"
+                style={{ paddingRight: '2.5rem' }}
+              />
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--foreground-muted)' }}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '1rem', opacity: loading ? 0.7 : 1 }}>
             {loading ? "Creating..." : "Create Account"}
