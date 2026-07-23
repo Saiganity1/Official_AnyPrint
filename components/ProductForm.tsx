@@ -97,16 +97,41 @@ export function ProductForm({ initialData }: ProductFormProps) {
     }
   };
 
-  const uploadFile = async (file: File): Promise<string> => {
-    const uploadData = new FormData();
-    uploadData.append('file', file);
-    const uploadRes = await fetch('/api/upload', {
-      method: 'POST',
-      body: uploadData,
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.8)); // Compress nicely
+        };
+        img.onerror = (error) => reject(error);
+      };
+      reader.onerror = (error) => reject(error);
     });
-    if (!uploadRes.ok) throw new Error("Failed to upload image");
-    const result = await uploadRes.json();
-    return result.imageUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,19 +140,19 @@ export function ProductForm({ initialData }: ProductFormProps) {
     setError("");
 
     try {
-      // 1. Upload main images
-      const uploadedMainUrls = await Promise.all(mainFiles.map(uploadFile));
+      // 1. Process main images to Base64
+      const uploadedMainUrls = await Promise.all(mainFiles.map(fileToBase64));
       
       // The final images array will be the existing images left + the newly uploaded ones
       const finalImages = [...existingImages, ...uploadedMainUrls];
       const mainImageUrl = finalImages.length > 0 ? finalImages[0] : null;
       const additionalImages = finalImages.length > 1 ? finalImages.slice(1) : [];
 
-      // 2. Upload variant images
+      // 2. Process variant images to Base64
       const finalVariants = [...variants];
       for (let i = 0; i < finalVariants.length; i++) {
         if (variantFiles[i]) {
-          finalVariants[i].imageUrl = await uploadFile(variantFiles[i]);
+          finalVariants[i].imageUrl = await fileToBase64(variantFiles[i]);
         }
       }
 
@@ -223,8 +248,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
         </div>
         
         {variants.length > 0 && (
-          <div style={{ fontSize: '0.75rem', color: 'var(--foreground-muted)', marginBottom: '1rem' }}>
-            Note: The main stock level above will be automatically calculated from your variant stock.
+          <div style={{ fontSize: '0.875rem', color: 'var(--primary)', marginBottom: '1rem', background: 'rgba(0,174,239,0.1)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
+            <strong>Pro Tip:</strong> Click "+ Add Variant" to create a new row for each unique size (e.g. Size M, Size L). This lets you set a different price for every single size! Note: The main stock level will be automatically calculated from your variant stock.
           </div>
         )}
 
@@ -233,9 +258,9 @@ export function ProductForm({ initialData }: ProductFormProps) {
             <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--background)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <input placeholder="Color (e.g. Red)" value={variant.color || ''} onChange={e => updateVariant(index, 'color', e.target.value)} className="input-field" style={{ padding: '0.5rem', flex: 1 }} />
-                <input placeholder="Size (e.g. M)" value={variant.size || ''} onChange={e => updateVariant(index, 'size', e.target.value)} className="input-field" style={{ padding: '0.5rem', flex: 1 }} />
+                <input placeholder="Specific Size (e.g. Size M)" value={variant.size || ''} onChange={e => updateVariant(index, 'size', e.target.value)} className="input-field" style={{ padding: '0.5rem', flex: 1.5 }} />
                 <input type="number" placeholder="Stock" min="0" value={variant.stock} onChange={e => updateVariant(index, 'stock', Number(e.target.value))} className="input-field" style={{ padding: '0.5rem', width: '80px' }} required />
-                <input type="number" placeholder="Override Price" min="0" value={variant.price || ''} onChange={e => updateVariant(index, 'price', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '120px' }} />
+                <input type="number" placeholder="Price for this Size (₱)" min="0" value={variant.price || ''} onChange={e => updateVariant(index, 'price', e.target.value)} className="input-field" style={{ padding: '0.5rem', width: '160px' }} />
                 <button type="button" onClick={() => removeVariant(index)} style={{ padding: '0.5rem', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1.25rem', lineHeight: 1 }} title="Remove">
                   &times;
                 </button>
