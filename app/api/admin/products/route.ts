@@ -19,7 +19,7 @@ const productSchema = z.object({
   description: z.string().min(5, "Description is too short").max(2000, "Description is too long"),
   price: z.preprocess((val) => Number(val), z.number().min(0, "Price cannot be negative")),
   stock: z.preprocess((val) => Number(val), z.number().int().min(0, "Stock cannot be negative")),
-  imageUrl: z.string().url().optional().or(z.literal("")).or(z.null()),
+  imageUrl: z.string().optional().or(z.literal("")).or(z.null()),
   images: z.array(z.string()).optional(),
   category: z.string().optional(),
   variants: z.array(variantSchema).optional()
