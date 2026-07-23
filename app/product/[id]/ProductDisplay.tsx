@@ -122,7 +122,7 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
                   {colors.map((color: string) => (
                     <button
                       key={color}
-                      onClick={() => setSelectedColor(color)}
+                      onClick={() => setSelectedColor(selectedColor === color ? null : color)}
                       style={{
                         padding: '0.5rem 1rem',
                         borderRadius: 'var(--radius-sm)',
@@ -147,7 +147,7 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
                   {sizes.map((size: string) => (
                     <button
                       key={size}
-                      onClick={() => setSelectedSize(size)}
+                      onClick={() => setSelectedSize(selectedSize === size ? null : size)}
                       style={{
                         padding: '0.5rem 1rem',
                         borderRadius: 'var(--radius-sm)',
