@@ -31,6 +31,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
       : []
   );
   const [imagePreviews, setImagePreviews] = useState<string[]>(existingImages);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
   
   // Track variant files by group index
   const [variantFiles, setVariantFiles] = useState<Record<number, File>>({});
@@ -180,6 +181,12 @@ export function ProductForm({ initialData }: ProductFormProps) {
     const newPreviews = [...imagePreviews];
     newPreviews.splice(index, 1);
     setImagePreviews(newPreviews);
+    
+    if (index === mainImageIndex) {
+      setMainImageIndex(0);
+    } else if (index < mainImageIndex) {
+      setMainImageIndex(mainImageIndex - 1);
+    }
   };
 
   const handleVariantImageSelect = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -258,6 +265,13 @@ export function ProductForm({ initialData }: ProductFormProps) {
       
       // The final images array will be the existing images left + the newly uploaded ones
       const finalImages = [...existingImages, ...uploadedMainUrls];
+
+      if (mainImageIndex > 0 && mainImageIndex < finalImages.length) {
+        const temp = finalImages[0];
+        finalImages[0] = finalImages[mainImageIndex];
+        finalImages[mainImageIndex] = temp;
+      }
+
       const mainImageUrl = finalImages.length > 0 ? finalImages[0] : null;
       const additionalImages = finalImages.length > 1 ? finalImages.slice(1) : [];
 
@@ -337,6 +351,29 @@ export function ProductForm({ initialData }: ProductFormProps) {
               <button type="button" onClick={() => removeMainImage(idx)} style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
                 &times;
               </button>
+              <button 
+                type="button" 
+                onClick={() => setMainImageIndex(idx)} 
+                title="Set as Main Image"
+                style={{ 
+                  position: 'absolute', 
+                  bottom: 2, 
+                  left: 2, 
+                  background: mainImageIndex === idx ? 'var(--primary)' : 'rgba(0,0,0,0.5)', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: 'var(--radius-sm)', 
+                  padding: '2px 4px', 
+                  fontSize: '10px',
+                  cursor: 'pointer',
+                  zIndex: 10
+                }}
+              >
+                {mainImageIndex === idx ? 'Main' : 'Set Main'}
+              </button>
+              {mainImageIndex === idx && (
+                <div style={{ position: 'absolute', inset: 0, border: '2px solid var(--primary)', borderRadius: 'var(--radius-sm)', pointerEvents: 'none' }} />
+              )}
             </div>
           ))}
         </div>
