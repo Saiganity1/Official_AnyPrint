@@ -223,19 +223,24 @@ export function ProductForm({ initialData }: ProductFormProps) {
     });
   };
 
+  const showError = (msg: string) => {
+    setError(msg);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name.trim()) return setError("Product Name is required.");
-    if (!formData.description.trim()) return setError("Description is required.");
-    if (String(formData.price) === "" || Number(formData.price) < 0) return setError("Valid Base Price is required.");
-    if (variantGroups.length === 0 && (String(formData.stock) === "" || Number(formData.stock) < 0)) return setError("Valid Base Stock is required.");
+    if (!formData.name.trim()) return showError("Product Name is required.");
+    if (!formData.description.trim()) return showError("Description is required.");
+    if (String(formData.price) === "" || Number(formData.price) < 0) return showError("Valid Base Price is required.");
+    if (variantGroups.length === 0 && (String(formData.stock) === "" || Number(formData.stock) < 0)) return showError("Valid Base Stock is required.");
 
     for (let i = 0; i < variantGroups.length; i++) {
       for (let j = 0; j < variantGroups[i].sizes.length; j++) {
         const s = variantGroups[i].sizes[j];
         if (s.stock === "" || Number(s.stock) < 0) {
-          return setError(`Stock is required for all variant sizes (Group ${i + 1}, Size ${j + 1}).`);
+          return showError(`Stock is required for all variant sizes (Group ${i + 1}, Size ${j + 1}).`);
         }
       }
     }
@@ -306,7 +311,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
       router.push("/admin/products");
       router.refresh();
     } catch (err: any) {
-      setError(err.message);
+      showError(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -524,6 +529,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
           })}
         </div>
       </div>
+
+      {error && <div style={{ color: '#ef4444', padding: '1rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-sm)' }}>{error}</div>}
 
       <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
         <button type="submit" disabled={isLoading} className="btn-primary">
