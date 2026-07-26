@@ -1,6 +1,32 @@
 import { prisma } from "@/lib/prisma";
 import { ProductCard } from "./ProductCard";
 import { cookies } from "next/headers";
+import { unstable_cache } from "next/cache";
+
+const getCachedRecommendations = unstable_cache(
+  async (orConditions: any[]) => {
+    return prisma.product.findMany({
+      where: { OR: orConditions },
+      take: 4,
+      orderBy: { salesCount: "desc" },
+      include: { reviews: { select: { rating: true } } }
+    });
+  },
+  ['recommended-products'],
+  { revalidate: 60, tags: ['products'] }
+);
+
+const getCachedNewArrivalIds = unstable_cache(
+  async () => {
+    return prisma.product.findMany({
+      take: 4,
+      orderBy: { createdAt: "desc" },
+      select: { id: true }
+    });
+  },
+  ['new-arrival-ids'],
+  { revalidate: 60, tags: ['products'] }
+);
 
 export async function RecommendedProducts() {
   const cookieStore = await cookies();
@@ -23,25 +49,8 @@ export async function RecommendedProducts() {
     { category: { contains: keyword } }
   ]);
 
-  const recommendedProducts = await prisma.product.findMany({
-    where: {
-      OR: orConditions
-    },
-    take: 4,
-    orderBy: { salesCount: "desc" },
-    include: {
-      reviews: {
-        select: { rating: true }
-      }
-    }
-  });
-
-  // Fetch new arrivals to check for overlap
-  const newArrivals = await prisma.product.findMany({
-    take: 4,
-    orderBy: { createdAt: "desc" },
-    select: { id: true }
-  });
+  const recommendedProducts = await getCachedRecommendations(orConditions);
+  const newArrivals = await getCachedNewArrivalIds();
 
   const recommendedIds = recommendedProducts.map(p => p.id);
   const newArrivalIds = newArrivals.map(p => p.id);

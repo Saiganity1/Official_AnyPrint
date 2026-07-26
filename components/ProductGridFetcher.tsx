@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PackageSearch, FilterX } from "lucide-react";
 import { ProductCard } from "./ProductCard";
+import { unstable_cache } from "next/cache";
 
 interface ProductGridFetcherProps {
   search?: string;
@@ -10,40 +11,49 @@ interface ProductGridFetcherProps {
   page: number;
 }
 
+const getCachedProducts = unstable_cache(
+  async (search: string | undefined, category: string | undefined, sort: string | undefined, page: number) => {
+    const TAKE = 20;
+    const whereClause: any = {};
+    
+    if (search) {
+      whereClause.OR = [
+        { name: { contains: search } },
+        { description: { contains: search } }
+      ];
+    }
+
+    if (category && category !== "All") {
+      whereClause.category = category;
+    }
+
+    let orderByClause: any = { createdAt: "desc" };
+    if (sort === "price_asc") orderByClause = { price: "asc" };
+    else if (sort === "price_desc") orderByClause = { price: "desc" };
+    else if (sort === "bestsellers") orderByClause = { salesCount: "desc" };
+
+    return Promise.all([
+      prisma.product.count({ where: whereClause }),
+      prisma.product.findMany({
+        where: whereClause,
+        orderBy: orderByClause,
+        take: TAKE,
+        skip: (page - 1) * TAKE,
+        include: {
+          reviews: {
+            select: { rating: true }
+          }
+        }
+      })
+    ]);
+  },
+  ['product-grid'],
+  { revalidate: 60, tags: ['products'] }
+);
+
 export async function ProductGridFetcher({ search, category, sort, page }: ProductGridFetcherProps) {
   const TAKE = 20;
-  const whereClause: any = {};
-  
-  if (search) {
-    whereClause.OR = [
-      { name: { contains: search } },
-      { description: { contains: search } }
-    ];
-  }
-
-  if (category && category !== "All") {
-    whereClause.category = category;
-  }
-
-  let orderByClause: any = { createdAt: "desc" };
-  if (sort === "price_asc") orderByClause = { price: "asc" };
-  else if (sort === "price_desc") orderByClause = { price: "desc" };
-  else if (sort === "bestsellers") orderByClause = { salesCount: "desc" };
-
-  const [totalProducts, products] = await Promise.all([
-    prisma.product.count({ where: whereClause }),
-    prisma.product.findMany({
-      where: whereClause,
-      orderBy: orderByClause,
-      take: TAKE,
-      skip: (page - 1) * TAKE,
-      include: {
-        reviews: {
-          select: { rating: true }
-        }
-      }
-    })
-  ]);
+  const [totalProducts, products] = await getCachedProducts(search, category, sort, page);
 
   const totalPages = Math.ceil(totalProducts / TAKE);
   
