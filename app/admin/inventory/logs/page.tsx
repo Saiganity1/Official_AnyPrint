@@ -1,9 +1,20 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { format } from "date-fns";
+import { InventoryDateFilter } from "@/components/InventoryDateFilter";
 
-export default async function InventoryLogsPage() {
+export default async function InventoryLogsPage({ searchParams }: { searchParams: { startDate?: string, endDate?: string } }) {
+  const whereClause: any = {};
+  
+  if (searchParams.startDate) {
+    whereClause.createdAt = { ...whereClause.createdAt, gte: new Date(`${searchParams.startDate}T00:00:00Z`) };
+  }
+  if (searchParams.endDate) {
+    whereClause.createdAt = { ...whereClause.createdAt, lte: new Date(`${searchParams.endDate}T23:59:59Z`) };
+  }
+
   const logs = await prisma.inventoryLog.findMany({
+    where: whereClause,
     orderBy: { createdAt: 'desc' },
     include: {
       product: true,
@@ -14,12 +25,14 @@ export default async function InventoryLogsPage() {
 
   return (
     <div className="animate-fade-in">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
         <Link href="/admin/inventory" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }}>
           ← Back
         </Link>
         <h1 style={{ fontSize: '2rem' }}>Inventory History</h1>
       </div>
+
+      <InventoryDateFilter />
 
       <div className="glass-card" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>

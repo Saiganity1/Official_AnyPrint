@@ -128,6 +128,18 @@ export async function POST(req: Request) {
             }
           });
         }
+
+        // Log the inventory deduction
+        await tx.inventoryLog.create({
+          data: {
+            productId: item.productId,
+            variantId: item.variantId || null,
+            userId: user.id,
+            type: "SALE",
+            quantity: -item.quantity,
+            reason: `Order placed (ID: ${newOrder.id})`
+          }
+        });
       }
 
       return newOrder;

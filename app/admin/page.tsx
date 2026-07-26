@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Package, ShoppingBag, Users, DollarSign } from "lucide-react";
 import dynamic from "next/dynamic";
+import { RefreshDashboardButton } from "@/components/RefreshDashboardButton";
 
 const SalesCharts = dynamic(
   () => import("@/components/SalesCharts").then((mod) => mod.SalesCharts),
@@ -71,7 +72,10 @@ export default async function AdminDashboard() {
   
     return (
       <div className="animate-fade-in">
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>Overview</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Overview</h1>
+          <RefreshDashboardButton />
+        </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
           <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>

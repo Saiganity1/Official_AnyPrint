@@ -52,8 +52,8 @@ export function ProductChatWidget() {
   useEffect(() => {
     if (isOpen) {
       fetchMessages();
-      // Poll every 3 seconds
-      const interval = setInterval(fetchMessages, 3000);
+      // Poll every 1 second for faster chat UX
+      const interval = setInterval(fetchMessages, 1000);
       return () => clearInterval(interval);
     }
   }, [isOpen, status, productId]);
@@ -69,6 +69,19 @@ export function ProductChatWidget() {
     const contentToSend = overrideMessage || newMessage;
     if (!contentToSend.trim() || status !== "authenticated") return;
 
+    // Optimistic Update
+    const optimisticMessage = {
+      id: `temp-${Date.now()}`,
+      content: contentToSend,
+      senderRole: "USER",
+      createdAt: new Date().toISOString(),
+      isRead: false
+    };
+    setMessages(prev => [...prev, optimisticMessage]);
+    
+    if (!overrideMessage) setNewMessage("");
+    if (overrideMessage && overrideMessage.startsWith("PRODUCT_LINK:")) setActiveProduct(null);
+
     setIsLoading(true);
     try {
       const res = await fetch("/api/chat/messages", {
@@ -78,8 +91,6 @@ export function ProductChatWidget() {
       });
 
       if (res.ok) {
-        if (!overrideMessage) setNewMessage("");
-        if (overrideMessage && overrideMessage.startsWith("PRODUCT_LINK:")) setActiveProduct(null); // hide the send product bar after sending
         fetchMessages();
       }
     } catch (error) {

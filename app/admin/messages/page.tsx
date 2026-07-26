@@ -37,18 +37,18 @@ export default function AdminMessagesPage() {
     }
   };
 
-  // Poll conversations every 5 seconds
+  // Poll conversations every 2 seconds for snappier updates
   useEffect(() => {
     fetchConversations();
-    const interval = setInterval(fetchConversations, 5000);
+    const interval = setInterval(fetchConversations, 2000);
     return () => clearInterval(interval);
   }, []);
 
-  // Poll active messages every 3 seconds
+  // Poll active messages every 1 second
   useEffect(() => {
     if (activeConversationId) {
       fetchMessages(activeConversationId);
-      const interval = setInterval(() => fetchMessages(activeConversationId), 3000);
+      const interval = setInterval(() => fetchMessages(activeConversationId), 1000);
       return () => clearInterval(interval);
     }
   }, [activeConversationId]);
@@ -63,16 +63,27 @@ export default function AdminMessagesPage() {
     e.preventDefault();
     if (!newMessage.trim() || !activeConversationId) return;
 
+    // Optimistic Update
+    const optimisticMessage = {
+      id: `temp-${Date.now()}`,
+      content: newMessage,
+      senderRole: "ADMIN",
+      createdAt: new Date().toISOString(),
+      isRead: true
+    };
+    setMessages(prev => [...prev, optimisticMessage]);
+    const contentToSend = newMessage;
+    setNewMessage("");
+
     setIsLoading(true);
     try {
       const res = await fetch(`/api/admin/chat/${activeConversationId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: newMessage })
+        body: JSON.stringify({ content: contentToSend })
       });
 
       if (res.ok) {
-        setNewMessage("");
         fetchMessages(activeConversationId);
         fetchConversations(); // Update list order
       }
