@@ -13,7 +13,7 @@ type Product = {
 };
 
 export function AddToCartButton({ product, variant, displayPrice, displayStock }: { product: Product, variant?: any, displayPrice?: number, displayStock?: number }) {
-  const { addToCart } = useCart();
+  const { addToCart, openCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
   const price = displayPrice ?? product.price;
@@ -39,6 +39,7 @@ export function AddToCartButton({ product, variant, displayPrice, displayStock }
     }
     
     toast.success(`${quantity}x ${product.name}${variantDesc} added to cart!`);
+    openCart();
   };
 
   if (stock <= 0) {

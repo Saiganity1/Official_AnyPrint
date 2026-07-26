@@ -448,6 +448,10 @@ input, textarea, select {
   font-weight: 600;
 }
 
+.hover-text-primary:hover {
+  color: var(--primary) !important;
+}
+
 .table-responsive {
   width: 100%;
   overflow-x: auto;

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { AddToCartButton } from "./AddToCartButton";
 import { AskQuestionButton } from "@/components/AskQuestionButton";
 
@@ -49,6 +51,17 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      {/* Breadcrumbs */}
+      <nav style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: 'var(--foreground-muted)' }}>
+        <Link href="/" style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }} className="hover-text-primary">Home</Link>
+        <ChevronRight size={14} />
+        <Link href={`/products?category=${encodeURIComponent(product.category)}`} style={{ color: 'var(--foreground-muted)', textDecoration: 'none' }} className="hover-text-primary">
+          {product.category}
+        </Link>
+        <ChevronRight size={14} />
+        <span style={{ color: 'var(--foreground)', fontWeight: 500 }}>{product.name}</span>
+      </nav>
+
       <div className="glass-card" style={{ display: 'flex', flexWrap: 'wrap', overflow: 'hidden' }}>
       {/* LEFT: Gallery */}
       <div style={{ flex: '1 1 50%', minWidth: '300px', backgroundColor: 'var(--background-secondary)', display: 'flex', flexDirection: 'column' }}>
@@ -196,6 +209,37 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
           <p style={{ color: 'var(--foreground)', lineHeight: '1.8', whiteSpace: 'pre-wrap', fontSize: '0.95rem' }}>{product.description}</p>
         </div>
       </div>
+
+      {/* Sticky Mobile Add-to-Cart */}
+      <div className="mobile-only" style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: 'var(--background-secondary)',
+        borderTop: '1px solid var(--border)',
+        padding: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        zIndex: 100,
+        boxShadow: '0 -4px 12px rgba(0,0,0,0.05)'
+      }}>
+        <div>
+          <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--foreground-muted)' }}>Total Price</p>
+          <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary)' }}>₱{displayPrice.toFixed(2)}</p>
+        </div>
+        <div style={{ flex: 1, marginLeft: '1rem' }}>
+          {(!hasVariants || isSelectionComplete) ? (
+            <AddToCartButton product={product} variant={selectedVariant} displayPrice={displayPrice} displayStock={displayStock} />
+          ) : (
+            <button className="btn-primary" disabled style={{ opacity: 0.5, cursor: 'not-allowed', width: '100%' }}>
+              Select Options
+            </button>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 }
