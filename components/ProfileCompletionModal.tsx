@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 export function ProfileCompletionModal() {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [formData, setFormData] = useState({
     phone: "",
     address: "",
@@ -34,11 +35,13 @@ export function ProfileCompletionModal() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrorMsg("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg("");
 
     try {
       const res = await fetch("/api/user/complete-profile", {
@@ -59,6 +62,7 @@ export function ProfileCompletionModal() {
       window.location.reload();
     } catch (error: any) {
       toast.error(error.message);
+      setErrorMsg(error.message);
     } finally {
       setLoading(false);
     }
@@ -82,6 +86,12 @@ export function ProfileCompletionModal() {
           Welcome, {session?.user?.name}! We need a few more details so you can checkout smoothly.
         </p>
 
+        {errorMsg && (
+          <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', fontSize: '0.875rem', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+            {errorMsg}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Phone Number *</label>
@@ -104,7 +114,7 @@ export function ProfileCompletionModal() {
               className="input-field" 
               value={formData.address}
               onChange={handleChange}
-              placeholder="123 Main St, Brgy. San Jose"
+              placeholder="House/Block No., Street, Barangay"
               required 
               minLength={5}
             />
@@ -147,9 +157,19 @@ export function ProfileCompletionModal() {
             />
           </div>
 
-          <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '1rem', width: '100%' }}>
-            {loading ? "Saving..." : "Save & Continue"}
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+            <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%' }}>
+              {loading ? "Saving..." : "Save & Continue"}
+            </button>
+            <button 
+              type="button" 
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              style={{ width: '100%', padding: '0.75rem', background: 'none', border: 'none', color: 'var(--foreground-muted)', cursor: 'pointer', fontSize: '0.875rem' }}
+              className="hover-text-primary"
+            >
+              Sign out and use a different account
+            </button>
+          </div>
         </form>
       </div>
     </div>
