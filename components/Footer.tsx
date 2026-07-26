@@ -64,15 +64,15 @@ export function Footer() {
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <li style={{ display: 'flex', gap: '0.75rem', color: 'var(--foreground-muted)', alignItems: 'flex-start' }}>
               <MapPin size={20} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '2px' }} />
-              <span>123 Printing Ave, Metro Manila, Philippines</span>
+              <span>Blk 21 lot 2, Carissa 3A, SJDM, 3023 Bulacan</span>
             </li>
             <li style={{ display: 'flex', gap: '0.75rem', color: 'var(--foreground-muted)', alignItems: 'center' }}>
               <Phone size={20} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-              <span>+63 912 345 6789</span>
+              <span>09151288581/09959564565</span>
             </li>
             <li style={{ display: 'flex', gap: '0.75rem', color: 'var(--foreground-muted)', alignItems: 'center' }}>
               <Mail size={20} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-              <span>support@anyprintavenue.com</span>
+              <span>anyprintservicesph@gmail.com</span>
             </li>
           </ul>
         </div>
