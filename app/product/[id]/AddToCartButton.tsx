@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useCart } from "@/components/CartContext";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type Product = {
   id: string;
@@ -15,6 +16,7 @@ type Product = {
 export function AddToCartButton({ product, variant, displayPrice, displayStock }: { product: Product, variant?: any, displayPrice?: number, displayStock?: number }) {
   const { addToCart, openCart } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const router = useRouter();
 
   const price = displayPrice ?? product.price;
   const stock = displayStock ?? product.stock;
@@ -40,6 +42,22 @@ export function AddToCartButton({ product, variant, displayPrice, displayStock }
     
     toast.success(`${quantity}x ${product.name}${variantDesc} added to cart!`);
     openCart();
+  };
+
+  const handleBuyNow = () => {
+    addToCart({
+      id: variant ? `${product.id}-${variant.id}` : product.id,
+      productId: product.id,
+      variantId: variant?.id,
+      name: product.name,
+      price: price,
+      imageUrl: product.imageUrl,
+      quantity,
+      stock: stock,
+      color: variant?.color,
+      size: variant?.size,
+    });
+    router.push('/checkout');
   };
 
   if (stock <= 0) {
@@ -70,13 +88,22 @@ export function AddToCartButton({ product, variant, displayPrice, displayStock }
         </button>
       </div>
       
-      <button 
-        onClick={handleAdd} 
-        className="btn-primary" 
-        style={{ flex: 1 }}
-      >
-        Add to Cart
-      </button>
+      <div style={{ display: 'flex', gap: '0.5rem', flex: 1 }}>
+        <button 
+          onClick={handleAdd} 
+          className="btn-secondary" 
+          style={{ flex: 1 }}
+        >
+          Add to Cart
+        </button>
+        <button 
+          onClick={handleBuyNow} 
+          className="btn-primary" 
+          style={{ flex: 1 }}
+        >
+          Buy Now
+        </button>
+      </div>
     </div>
   );
 }
