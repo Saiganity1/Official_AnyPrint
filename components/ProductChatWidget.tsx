@@ -11,7 +11,7 @@ export function ProductChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const isSendingRef = useRef(false);
+  const pendingRequestsRef = useRef(0);
   const [productId, setProductId] = useState<string | null>(null);
   const [productName, setProductName] = useState<string | null>(null);
   const [activeProduct, setActiveProduct] = useState<any | null>(null);
@@ -20,13 +20,21 @@ export function ProductChatWidget() {
 
   useEffect(() => setMounted(true), []);
 
-  const fetchMessages = async () => {
+  const fetchMessages = async (isAfterSend = false) => {
     if (status !== "authenticated") return;
     const url = productId ? `/api/chat/messages?productId=${productId}` : `/api/chat/messages`;
     try {
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
+        
+        // If there are pending requests, the server state is stale (missing the optimistic messages).
+        // Only accept the server state if there are NO pending requests, 
+        // OR if this is the explicit fetch after the LAST pending request finishes.
+        if (pendingRequestsRef.current > (isAfterSend ? 1 : 0)) {
+          return;
+        }
+        
         setMessages(data);
       }
     } catch (error) {
@@ -54,7 +62,7 @@ export function ProductChatWidget() {
       fetchMessages();
       // Poll every 1 second, but pause if we are currently sending to prevent optimistic UI flicker
       const interval = setInterval(() => {
-        if (!isSendingRef.current) {
+        if (pendingRequestsRef.current === 0) {
           fetchMessages();
         }
       }, 1000);
@@ -86,7 +94,7 @@ export function ProductChatWidget() {
     if (!overrideMessage) setNewMessage("");
     if (overrideMessage && overrideMessage.startsWith("PRODUCT_LINK:")) setActiveProduct(null);
 
-    isSendingRef.current = true;
+    pendingRequestsRef.current += 1;
     try {
       const res = await fetch("/api/chat/messages", {
         method: "POST",
@@ -95,12 +103,14 @@ export function ProductChatWidget() {
       });
 
       if (res.ok) {
-        await fetchMessages();
+        if (pendingRequestsRef.current === 1) {
+          await fetchMessages(true);
+        }
       }
     } catch (error) {
       console.error(error);
     } finally {
-      isSendingRef.current = false;
+      pendingRequestsRef.current -= 1;
     }
   };
 
