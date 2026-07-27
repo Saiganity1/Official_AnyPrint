@@ -24,6 +24,7 @@ interface AddressPickerProps {
     address: string;
     latitude: number;
     longitude: number;
+    zipCode?: string;
   }) => void;
 }
 
@@ -43,6 +44,7 @@ export default function AddressPicker({
   
   const [lat, setLat] = useState(initialLat);
   const [lng, setLng] = useState(initialLng);
+  const [zipCode, setZipCode] = useState('');
 
   const [availableProvinces, setAvailableProvinces] = useState<any[]>([]);
   const [availableCities, setAvailableCities] = useState<any[]>([]);
@@ -80,21 +82,27 @@ export default function AddressPicker({
     // Auto-center map using OSM Nominatim only after barangay is selected
     if (city && province && barangay) {
       const query = encodeURIComponent(`${barangay}, ${city}, ${province}, Philippines`);
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
-        .then(res => res.json())
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${query}`)
+        .then(res => res.ok ? res.json() : [])
         .then(data => {
           if (data && data.length > 0) {
             setLat(parseFloat(data[0].lat));
             setLng(parseFloat(data[0].lon));
+            if (data[0].address && data[0].address.postcode) {
+              setZipCode(data[0].address.postcode);
+            }
           } else {
             // Fallback to just city and province if barangay is not found
             const fallbackQuery = encodeURIComponent(`${city}, ${province}, Philippines`);
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fallbackQuery}`)
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${fallbackQuery}`)
               .then(res => res.ok ? res.json() : [])
               .then(fallbackData => {
                 if (fallbackData && fallbackData.length > 0) {
                   setLat(parseFloat(fallbackData[0].lat));
                   setLng(parseFloat(fallbackData[0].lon));
+                  if (fallbackData[0].address && fallbackData[0].address.postcode) {
+                    setZipCode(fallbackData[0].address.postcode);
+                  }
                 }
               })
               .catch(console.error);
@@ -111,9 +119,10 @@ export default function AddressPicker({
       barangay,
       address: streetAddress,
       latitude: lat,
-      longitude: lng
+      longitude: lng,
+      zipCode
     });
-  }, [province, city, barangay, streetAddress, lat, lng]);
+  }, [province, city, barangay, streetAddress, lat, lng, zipCode]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -200,9 +209,6 @@ export default function AddressPicker({
                 }} 
               />
             </div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--foreground-muted)', marginTop: '0.5rem' }}>
-              Coordinates: {lat.toFixed(6)}, {lng.toFixed(6)}
-            </p>
           </>
         ) : (
           <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--background-secondary)', borderRadius: 'var(--radius-md)', color: 'var(--foreground-muted)' }}>

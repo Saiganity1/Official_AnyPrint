@@ -146,7 +146,12 @@ export default function CheckoutPage() {
                 initialAddress={locationData.address}
                 initialLat={locationData.latitude}
                 initialLng={locationData.longitude}
-                onChange={(data) => setLocationData(data)}
+                onChange={(data) => {
+                  setLocationData(data as any);
+                  if (data.zipCode) {
+                    setZipCode(data.zipCode);
+                  }
+                }}
               />
             )}
 

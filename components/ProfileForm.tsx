@@ -166,7 +166,10 @@ export function ProfileForm({ initialData }: { initialData: UserProfile }) {
           initialLat={locationData.latitude}
           initialLng={locationData.longitude}
           onChange={(data) => {
-            setLocationData(data);
+            setLocationData(data as any);
+            if (data.zipCode) {
+              setFormData(prev => ({ ...prev, zipCode: data.zipCode! }));
+            }
             setSuccess(false);
           }}
         />
