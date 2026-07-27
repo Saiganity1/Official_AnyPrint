@@ -74,20 +74,35 @@ export default function AddressPicker({
       setAvailableBarangays([]);
       setBarangay('');
     }
-    
-    // Auto-center map on city selection using OSM Nominatim
-    if (city && province) {
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${city},${province},Philippines`)
+  }, [city]);
+
+  useEffect(() => {
+    // Auto-center map using OSM Nominatim only after barangay is selected
+    if (city && province && barangay) {
+      const query = encodeURIComponent(`${barangay}, ${city}, ${province}, Philippines`);
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
         .then(res => res.json())
         .then(data => {
           if (data && data.length > 0) {
             setLat(parseFloat(data[0].lat));
             setLng(parseFloat(data[0].lon));
+          } else {
+            // Fallback to just city and province if barangay is not found
+            const fallbackQuery = encodeURIComponent(`${city}, ${province}, Philippines`);
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fallbackQuery}`)
+              .then(res => res.json())
+              .then(fallbackData => {
+                if (fallbackData && fallbackData.length > 0) {
+                  setLat(parseFloat(fallbackData[0].lat));
+                  setLng(parseFloat(fallbackData[0].lon));
+                }
+              })
+              .catch(console.error);
           }
         })
         .catch(console.error);
     }
-  }, [city, province]);
+  }, [city, province, barangay]);
 
   useEffect(() => {
     onChange({
