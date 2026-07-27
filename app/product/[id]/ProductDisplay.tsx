@@ -76,7 +76,8 @@ export function ProductDisplay({ product, allImages }: { product: any, allImages
               sizes="(max-width: 768px) 100vw, 50vw" 
               style={{ 
                 objectFit: 'cover'
-              }} 
+              }}
+              priority={true}
             />
           ) : (
             <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--foreground-muted)' }}>
