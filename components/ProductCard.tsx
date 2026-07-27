@@ -18,7 +18,7 @@ export function ProductCard({ product }: ProductCardProps) {
     : 0;
 
   return (
-    <Link href={`/product/${product.id}`} className="glass-card" style={{ display: 'block', overflow: 'hidden' }}>
+    <Link href={`/product/${product.id}`} className="glass-card" style={{ display: 'block', overflow: 'hidden' }} prefetch={true}>
       <div className="img-zoom-container" style={{ width: '100%', height: '250px', backgroundColor: 'var(--background-secondary)', position: 'relative' }}>
         {product.imageUrl ? (
           <Image src={product.imageUrl} alt={product.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{ objectFit: 'cover' }} />

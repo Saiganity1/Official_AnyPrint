@@ -1,23 +1,43 @@
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import { ProductDisplay } from "./ProductDisplay";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { ProductReviewsServer } from "./ProductReviewsServer";
 import { Suspense } from "react";
 
+export async function generateStaticParams() {
+  const products = await prisma.product.findMany({ select: { id: true } });
+  return products.map((product) => ({
+    id: product.id,
+  }));
+}
+
+export const dynamicParams = true;
+export const revalidate = 60;
+
+
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
-  const product = await prisma.product.findUnique({
-    where: { id: resolvedParams.id },
-    include: {
-      variants: true,
-      images: true,
-      reviews: {
-        include: { user: { select: { name: true, image: true } } },
-        orderBy: { createdAt: 'desc' }
-      }
-    }
-  });
+  const getCachedProduct = unstable_cache(
+    async (id: string) => {
+      return await prisma.product.findUnique({
+        where: { id },
+        include: {
+          variants: true,
+          images: true,
+          reviews: {
+            include: { user: { select: { name: true, image: true } } },
+            orderBy: { createdAt: 'desc' }
+          }
+        }
+      });
+    },
+    ['product-details'],
+    { revalidate: 60, tags: ['products'] }
+  );
+
+  const product = await getCachedProduct(resolvedParams.id);
 
   if (!product) {
     notFound();
