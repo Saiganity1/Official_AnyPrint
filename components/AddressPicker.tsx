@@ -4,11 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { provinces, city_mun, barangays } from 'phil-reg-prov-mun-brgy';
 
-// Dynamically import map to avoid SSR issues with Leaflet
-const MapWithNoSSR = dynamic(() => import('./MapComponent'), {
-  ssr: false,
-  loading: () => <div style={{ height: '300px', width: '100%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Map...</div>
-});
+
 
 interface AddressPickerProps {
   initialProvince?: string;
@@ -192,30 +188,7 @@ export default function AddressPicker({
         />
       </div>
 
-      <div style={{ marginTop: '0.5rem' }}>
-        {province && city && barangay ? (
-          <>
-            <label className="form-label">Pin Your Exact Location *</label>
-            <p style={{ fontSize: '0.875rem', color: 'var(--foreground-muted)', marginBottom: '0.5rem' }}>
-              Drag the marker to your exact house or building.
-            </p>
-            <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
-              <MapWithNoSSR 
-                lat={lat} 
-                lng={lng} 
-                onLocationChange={(newLat, newLng) => {
-                  setLat(newLat);
-                  setLng(newLng);
-                }} 
-              />
-            </div>
-          </>
-        ) : (
-          <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--background-secondary)', borderRadius: 'var(--radius-md)', color: 'var(--foreground-muted)' }}>
-            Please select your Province, City, and Barangay first to unlock the interactive map.
-          </div>
-        )}
-      </div>
+
     </div>
   );
 }
