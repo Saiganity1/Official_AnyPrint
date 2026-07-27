@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { provinces, cities, barangays } from 'phil-reg-prov-mun-brgy';
+import { provinces, city_mun, barangays } from 'phil-reg-prov-mun-brgy';
 
 // Dynamically import map to avoid SSR issues with Leaflet
 const MapWithNoSSR = dynamic(() => import('./MapComponent'), {
@@ -56,7 +56,7 @@ export default function AddressPicker({
     if (province) {
       const selectedProv = provinces.find(p => p.name === province);
       if (selectedProv) {
-        setAvailableCities(cities.filter(c => c.provCode === selectedProv.provCode));
+        setAvailableCities(city_mun.filter(c => c.provCode === selectedProv.provCode));
       }
     } else {
       setAvailableCities([]);
@@ -66,7 +66,7 @@ export default function AddressPicker({
 
   useEffect(() => {
     if (city) {
-      const selectedCity = cities.find(c => c.name === city);
+      const selectedCity = city_mun.find(c => c.name === city);
       if (selectedCity) {
         setAvailableBarangays(barangays.filter(b => b.citymunCode === selectedCity.citymunCode));
       }
@@ -90,7 +90,7 @@ export default function AddressPicker({
             // Fallback to just city and province if barangay is not found
             const fallbackQuery = encodeURIComponent(`${city}, ${province}, Philippines`);
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fallbackQuery}`)
-              .then(res => res.json())
+              .then(res => res.ok ? res.json() : [])
               .then(fallbackData => {
                 if (fallbackData && fallbackData.length > 0) {
                   setLat(parseFloat(fallbackData[0].lat));
@@ -183,23 +183,32 @@ export default function AddressPicker({
         />
       </div>
 
-      <div>
-        <label className="form-label" style={{ marginBottom: '0.5rem', display: 'block' }}>
-          Pin Your Location (Drag marker to exact location)
-        </label>
-        <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
-          <MapWithNoSSR 
-            lat={lat} 
-            lng={lng} 
-            onLocationChange={(newLat, newLng) => {
-              setLat(newLat);
-              setLng(newLng);
-            }} 
-          />
-        </div>
-        <p style={{ fontSize: '0.75rem', color: 'var(--foreground-muted)', marginTop: '0.5rem' }}>
-          Coordinates: {lat.toFixed(6)}, {lng.toFixed(6)}
-        </p>
+      <div style={{ marginTop: '0.5rem' }}>
+        {province && city && barangay ? (
+          <>
+            <label className="form-label">Pin Your Exact Location *</label>
+            <p style={{ fontSize: '0.875rem', color: 'var(--foreground-muted)', marginBottom: '0.5rem' }}>
+              Drag the marker to your exact house or building.
+            </p>
+            <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
+              <MapWithNoSSR 
+                lat={lat} 
+                lng={lng} 
+                onLocationChange={(newLat, newLng) => {
+                  setLat(newLat);
+                  setLng(newLng);
+                }} 
+              />
+            </div>
+            <p style={{ fontSize: '0.75rem', color: 'var(--foreground-muted)', marginTop: '0.5rem' }}>
+              Coordinates: {lat.toFixed(6)}, {lng.toFixed(6)}
+            </p>
+          </>
+        ) : (
+          <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--background-secondary)', borderRadius: 'var(--radius-md)', color: 'var(--foreground-muted)' }}>
+            Please select your Province, City, and Barangay first to unlock the interactive map.
+          </div>
+        )}
       </div>
     </div>
   );
