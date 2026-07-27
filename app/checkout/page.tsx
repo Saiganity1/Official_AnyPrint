@@ -4,6 +4,7 @@ import { useCart } from "@/components/CartContext";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import AddressPicker from "@/components/AddressPicker";
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart();
@@ -12,10 +13,17 @@ export default function CheckoutPage() {
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [province, setProvince] = useState("");
   const [zipCode, setZipCode] = useState("");
+  const [locationData, setLocationData] = useState({
+    province: "",
+    city: "",
+    barangay: "",
+    address: "",
+    latitude: 14.5995,
+    longitude: 120.9842
+  });
+  
+  const [loadedInitial, setLoadedInitial] = useState(false);
   
   const [checkingOut, setCheckingOut] = useState(false);
   const [error, setError] = useState("");
@@ -30,14 +38,24 @@ export default function CheckoutPage() {
         .then(data => {
           if (data.name) setFullName(data.name);
           if (data.phone) setPhone(data.phone);
-          if (data.address) setAddress(data.address);
-          if (data.city) setCity(data.city);
-          if (data.province) setProvince(data.province);
           if (data.zipCode) setZipCode(data.zipCode);
+          
+          setLocationData({
+            province: data.province || "",
+            city: data.city || "",
+            barangay: "", // Barangay isn't separately stored in DB yet, so they'll need to re-select or we extract it.
+            address: data.address || "",
+            latitude: data.latitude || 14.5995,
+            longitude: data.longitude || 120.9842
+          });
         })
-        .finally(() => setIsLoadingProfile(false));
+        .finally(() => {
+          setIsLoadingProfile(false);
+          setLoadedInitial(true);
+        });
     } else if (status !== "loading") {
       setIsLoadingProfile(false);
+      setLoadedInitial(true);
     }
   }, [status]);
 
@@ -55,6 +73,7 @@ export default function CheckoutPage() {
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { address, barangay, city, province, latitude, longitude } = locationData;
     if (!fullName || !phone || !address || !city || !province || !zipCode) {
       setError("Please fill in all shipping details.");
       return;
@@ -63,7 +82,8 @@ export default function CheckoutPage() {
     setCheckingOut(true);
     setError("");
 
-    const shippingAddress = `${fullName}, ${phone}, ${address}, ${city}, ${province}, ${zipCode}`;
+    const fullStreetAddress = barangay ? `${address}, Brgy. ${barangay}` : address;
+    const shippingAddress = `${fullName}, ${phone}, ${fullStreetAddress}, ${city}, ${province}, ${zipCode}`;
 
     try {
       const res = await fetch("/api/checkout", {
@@ -74,7 +94,7 @@ export default function CheckoutPage() {
           total, 
           shippingAddress,
           saveAddress,
-          addressData: { address, city, province, zipCode }
+          addressData: { address: fullStreetAddress, city, province, zipCode, latitude, longitude }
         })
       });
 
@@ -118,23 +138,21 @@ export default function CheckoutPage() {
                 <input type="text" className="input-field" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="09123456789" />
               </div>
             </div>
+            
+            {loadedInitial && (
+              <AddressPicker 
+                initialProvince={locationData.province}
+                initialCity={locationData.city}
+                initialAddress={locationData.address}
+                initialLat={locationData.latitude}
+                initialLng={locationData.longitude}
+                onChange={(data) => setLocationData(data)}
+              />
+            )}
 
-            <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', fontWeight: '500' }}>Street Address</label>
-              <input type="text" className="input-field" value={address} onChange={(e) => setAddress(e.target.value)} required placeholder="123 Main St, Brgy. San Jose" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', fontWeight: '500' }}>City / Municipality</label>
-                <input type="text" className="input-field" value={city} onChange={(e) => setCity(e.target.value)} required placeholder="Quezon City" />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', fontWeight: '500' }}>Province</label>
-                <input type="text" className="input-field" value={province} onChange={(e) => setProvince(e.target.value)} required placeholder="Metro Manila" />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', fontWeight: '500' }}>Zip Code</label>
+                <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', fontWeight: '500' }}>Zip Code *</label>
                 <input type="text" className="input-field" value={zipCode} onChange={(e) => setZipCode(e.target.value)} required placeholder="1100" />
               </div>
             </div>

@@ -22,6 +22,8 @@ const checkoutSchema = z.object({
     city: z.string().optional(),
     province: z.string().optional(),
     zipCode: z.string().optional(),
+    latitude: z.number().optional(),
+    longitude: z.number().optional(),
   }).optional()
 });
 
@@ -84,6 +86,8 @@ export async function POST(req: Request) {
             city: addressData.city,
             province: addressData.province,
             zipCode: addressData.zipCode,
+            latitude: addressData.latitude,
+            longitude: addressData.longitude,
           }
         });
       }
@@ -93,6 +97,8 @@ export async function POST(req: Request) {
           userId: user.id,
           total: total,
           shippingAddress: shippingAddress,
+          latitude: addressData?.latitude,
+          longitude: addressData?.longitude,
           status: "PENDING",
           items: {
             create: items.map((item: any) => ({

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AddressPicker from "./AddressPicker";
 
 interface UserProfile {
   id: string;
@@ -13,6 +14,8 @@ interface UserProfile {
   city?: string | null;
   province?: string | null;
   zipCode?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export function ProfileForm({ initialData }: { initialData: UserProfile }) {
@@ -27,10 +30,16 @@ export function ProfileForm({ initialData }: { initialData: UserProfile }) {
   const [formData, setFormData] = useState({
     name: initialData.name || "",
     phone: initialData.phone || "",
-    address: initialData.address || "",
-    city: initialData.city || "",
-    province: initialData.province || "",
     zipCode: initialData.zipCode || "",
+  });
+  
+  const [locationData, setLocationData] = useState({
+    province: initialData.province || "",
+    city: initialData.city || "",
+    barangay: "",
+    address: initialData.address || "",
+    latitude: initialData.latitude || 14.5995,
+    longitude: initialData.longitude || 120.9842
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,10 +85,20 @@ export function ProfileForm({ initialData }: { initialData: UserProfile }) {
       }
 
       // 2. Update profile data
+      const fullStreetAddress = locationData.barangay ? `${locationData.address}, Brgy. ${locationData.barangay}` : locationData.address;
+      
       const res = await fetch("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, image: finalImageUrl }),
+        body: JSON.stringify({ 
+          ...formData, 
+          image: finalImageUrl,
+          address: fullStreetAddress,
+          city: locationData.city,
+          province: locationData.province,
+          latitude: locationData.latitude,
+          longitude: locationData.longitude
+        }),
       });
 
       if (!res.ok) {
@@ -140,20 +159,19 @@ export function ProfileForm({ initialData }: { initialData: UserProfile }) {
 
         <h3 style={{ fontSize: "1.25rem", borderBottom: "1px solid var(--border)", paddingBottom: "0.5rem", marginTop: "1.5rem" }}>Saved Address</h3>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-          <label htmlFor="address" style={{ fontWeight: "500" }}>Street Address</label>
-          <input type="text" id="address" name="address" value={formData.address} onChange={handleChange} className="input-field" placeholder="123 Main St, Brgy. San Jose" />
-        </div>
+        <AddressPicker 
+          initialProvince={locationData.province}
+          initialCity={locationData.city}
+          initialAddress={locationData.address}
+          initialLat={locationData.latitude}
+          initialLng={locationData.longitude}
+          onChange={(data) => {
+            setLocationData(data);
+            setSuccess(false);
+          }}
+        />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label htmlFor="city" style={{ fontWeight: "500" }}>City / Municipality</label>
-            <input type="text" id="city" name="city" value={formData.city} onChange={handleChange} className="input-field" placeholder="Quezon City" />
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            <label htmlFor="province" style={{ fontWeight: "500" }}>Province</label>
-            <input type="text" id="province" name="province" value={formData.province} onChange={handleChange} className="input-field" placeholder="Metro Manila" />
-          </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <label htmlFor="zipCode" style={{ fontWeight: "500" }}>Zip Code</label>
             <input type="text" id="zipCode" name="zipCode" value={formData.zipCode} onChange={handleChange} className="input-field" placeholder="1100" />

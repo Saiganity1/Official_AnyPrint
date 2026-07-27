@@ -25,6 +25,8 @@ export async function GET(req: Request) {
         city: true,
         province: true,
         zipCode: true,
+        latitude: true,
+        longitude: true,
         createdAt: true
       }
     });
@@ -50,7 +52,7 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { name, phone, image, address, city, province, zipCode } = body;
+    const { name, phone, image, address, city, province, zipCode, latitude, longitude } = body;
 
     // Check if phone is being updated and already exists
     if (phone) {
@@ -75,7 +77,9 @@ export async function PATCH(req: Request) {
         ...(address !== undefined && { address }),
         ...(city !== undefined && { city }),
         ...(province !== undefined && { province }),
-        ...(zipCode !== undefined && { zipCode })
+        ...(zipCode !== undefined && { zipCode }),
+        ...(latitude !== undefined && { latitude }),
+        ...(longitude !== undefined && { longitude })
       },
       select: {
         id: true,
@@ -87,7 +91,9 @@ export async function PATCH(req: Request) {
         address: true,
         city: true,
         province: true,
-        zipCode: true
+        zipCode: true,
+        latitude: true,
+        longitude: true
       }
     });
 

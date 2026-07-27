@@ -53,6 +53,8 @@ model User {
   city          String?
   province      String?
   zipCode       String?
+  latitude      Float?
+  longitude     Float?
   accounts      Account[]
   sessions      Session[]
   orders        Order[]
@@ -150,6 +152,8 @@ model Order {
   user            User        @relation(fields: [userId], references: [id])
   total           Float
   shippingAddress String?
+  latitude        Float?
+  longitude       Float?
   trackingNumber  String?
   status          String      @default("PENDING") // "PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"
   items           OrderItem[]

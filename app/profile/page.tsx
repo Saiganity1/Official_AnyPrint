@@ -25,6 +25,8 @@ export default async function ProfilePage() {
       city: true,
       province: true,
       zipCode: true,
+      latitude: true,
+      longitude: true,
     }
   });
 
