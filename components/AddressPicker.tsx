@@ -56,7 +56,7 @@ export default function AddressPicker({
     if (province) {
       const selectedProv = provinces.find(p => p.name === province);
       if (selectedProv) {
-        setAvailableCities(city_mun.filter(c => c.provCode === selectedProv.provCode));
+        setAvailableCities(city_mun.filter(c => c.prov_code === selectedProv.prov_code));
       }
     } else {
       setAvailableCities([]);
@@ -68,7 +68,7 @@ export default function AddressPicker({
     if (city) {
       const selectedCity = city_mun.find(c => c.name === city);
       if (selectedCity) {
-        setAvailableBarangays(barangays.filter(b => b.citymunCode === selectedCity.citymunCode));
+        setAvailableBarangays(barangays.filter(b => b.mun_code === selectedCity.mun_code));
       }
     } else {
       setAvailableBarangays([]);
@@ -132,7 +132,7 @@ export default function AddressPicker({
           >
             <option value="">Select Province</option>
             {availableProvinces.map(p => (
-              <option key={p.provCode} value={p.name}>{p.name}</option>
+              <option key={p.prov_code} value={p.name}>{p.name}</option>
             ))}
           </select>
         </div>
@@ -150,7 +150,7 @@ export default function AddressPicker({
           >
             <option value="">Select City/Municipality</option>
             {availableCities.map(c => (
-              <option key={c.citymunCode} value={c.name}>{c.name}</option>
+              <option key={c.mun_code} value={c.name}>{c.name}</option>
             ))}
           </select>
         </div>
@@ -164,8 +164,8 @@ export default function AddressPicker({
             required
           >
             <option value="">Select Barangay</option>
-            {availableBarangays.map(b => (
-              <option key={b.brgyCode} value={b.name}>{b.name}</option>
+            {availableBarangays.map((b, i) => (
+              <option key={`${b.mun_code}-${i}`} value={b.name}>{b.name}</option>
             ))}
           </select>
         </div>
