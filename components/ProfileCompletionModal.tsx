@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import AddressPicker from "./AddressPicker";
 
 export function ProfileCompletionModal() {
   const { data: session, status } = useSession();
@@ -14,10 +15,16 @@ export function ProfileCompletionModal() {
   const [errorMsg, setErrorMsg] = useState("");
   const [formData, setFormData] = useState({
     phone: "",
-    address: "",
-    city: "",
-    province: "",
     zipCode: "",
+  });
+
+  const [locationData, setLocationData] = useState({
+    province: "",
+    city: "",
+    barangay: "",
+    address: "",
+    latitude: 14.5995,
+    longitude: 120.9842
   });
 
   useEffect(() => {
@@ -44,10 +51,19 @@ export function ProfileCompletionModal() {
     setErrorMsg("");
 
     try {
+      const fullStreetAddress = locationData.barangay ? `${locationData.address}, Brgy. ${locationData.barangay}` : locationData.address;
+
       const res = await fetch("/api/user/complete-profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ 
+          ...formData,
+          address: fullStreetAddress,
+          city: locationData.city,
+          province: locationData.province,
+          latitude: locationData.latitude,
+          longitude: locationData.longitude
+        }),
       });
 
       const data = await res.json();
@@ -106,44 +122,15 @@ export function ProfileCompletionModal() {
               minLength={10}
             />
           </div>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Full Address *</label>
-            <input 
-              type="text" 
-              name="address"
-              className="input-field" 
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="House/Block No., Street, Barangay"
-              required 
-              minLength={5}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>City</label>
-              <input 
-                type="text" 
-                name="city"
-                className="input-field" 
-                value={formData.city}
-                onChange={handleChange}
-                placeholder="City"
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Province</label>
-              <input 
-                type="text" 
-                name="province"
-                className="input-field" 
-                value={formData.province}
-                onChange={handleChange}
-                placeholder="Province"
-              />
-            </div>
-          </div>
+
+          <AddressPicker 
+            initialProvince={locationData.province}
+            initialCity={locationData.city}
+            initialAddress={locationData.address}
+            initialLat={locationData.latitude}
+            initialLng={locationData.longitude}
+            onChange={(data) => setLocationData(data)}
+          />
           
           <div>
             <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Zip Code</label>

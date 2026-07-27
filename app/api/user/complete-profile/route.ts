@@ -10,6 +10,8 @@ const profileSchema = z.object({
   city: z.string().optional(),
   province: z.string().optional(),
   zipCode: z.string().optional(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 });
 
 export async function POST(req: Request) {
@@ -30,7 +32,7 @@ export async function POST(req: Request) {
     }
 
     const userId = (session.user as any).id;
-    const { phone, address, city, province, zipCode } = result.data;
+    const { phone, address, city, province, zipCode, latitude, longitude } = result.data;
 
     // Check if phone number is already taken by another user
     const existingUser = await prisma.user.findFirst({
@@ -46,7 +48,7 @@ export async function POST(req: Request) {
 
     await prisma.user.update({
       where: { id: userId },
-      data: { phone, address, city, province, zipCode },
+      data: { phone, address, city, province, zipCode, latitude, longitude },
     });
 
     return NextResponse.json({ message: "Profile updated successfully" });
