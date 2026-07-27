@@ -11,7 +11,7 @@ export function ProductChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const isSendingRef = useRef(false);
   const [productId, setProductId] = useState<string | null>(null);
   const [productName, setProductName] = useState<string | null>(null);
   const [activeProduct, setActiveProduct] = useState<any | null>(null);
@@ -52,8 +52,12 @@ export function ProductChatWidget() {
   useEffect(() => {
     if (isOpen) {
       fetchMessages();
-      // Poll every 1 second for faster chat UX
-      const interval = setInterval(fetchMessages, 1000);
+      // Poll every 1 second, but pause if we are currently sending to prevent optimistic UI flicker
+      const interval = setInterval(() => {
+        if (!isSendingRef.current) {
+          fetchMessages();
+        }
+      }, 1000);
       return () => clearInterval(interval);
     }
   }, [isOpen, status, productId]);
@@ -69,9 +73,9 @@ export function ProductChatWidget() {
     const contentToSend = overrideMessage || newMessage;
     if (!contentToSend.trim() || status !== "authenticated") return;
 
-    // Optimistic Update
+    const tempId = `temp-${Date.now()}-${Math.random()}`;
     const optimisticMessage = {
-      id: `temp-${Date.now()}`,
+      id: tempId,
       content: contentToSend,
       senderRole: "USER",
       createdAt: new Date().toISOString(),
@@ -82,7 +86,7 @@ export function ProductChatWidget() {
     if (!overrideMessage) setNewMessage("");
     if (overrideMessage && overrideMessage.startsWith("PRODUCT_LINK:")) setActiveProduct(null);
 
-    setIsLoading(true);
+    isSendingRef.current = true;
     try {
       const res = await fetch("/api/chat/messages", {
         method: "POST",
@@ -91,12 +95,12 @@ export function ProductChatWidget() {
       });
 
       if (res.ok) {
-        fetchMessages();
+        await fetchMessages();
       }
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      isSendingRef.current = false;
     }
   };
 
@@ -105,13 +109,28 @@ export function ProductChatWidget() {
       try {
         const p = JSON.parse(content.replace("PRODUCT_LINK:", ""));
         return (
-          <Link href={`/product/${p.id}`} onClick={() => setIsOpen(false)} style={{ textDecoration: 'none', display: 'flex', gap: '0.5rem', alignItems: 'center', background: 'var(--background)', padding: '0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', cursor: 'pointer' }}>
-            {p.imageUrl && (
-              <img src={p.imageUrl} alt={p.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+          <Link href={`/product/${p.id}`} onClick={() => setIsOpen(false)} style={{ 
+            textDecoration: 'none', 
+            display: 'flex', 
+            gap: '0.75rem', 
+            alignItems: 'center', 
+            background: 'var(--background)', 
+            padding: '0.75rem', 
+            borderRadius: '12px', 
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            cursor: 'pointer',
+            border: '1px solid var(--border)',
+            width: '100%',
+            maxWidth: '250px'
+          }}>
+            {p.imageUrl ? (
+              <img src={p.imageUrl} alt={p.name} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px' }} />
+            ) : (
+              <div style={{ width: '48px', height: '48px', background: 'var(--background-secondary)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📦</div>
             )}
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.875rem', fontWeight: 'bold', color: 'var(--foreground)', lineHeight: '1.2' }}>{p.name}</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 'bold' }}>₱{p.price?.toFixed(2)}</div>
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+              <div style={{ fontSize: '0.875rem', fontWeight: '600', color: 'var(--foreground)', lineHeight: '1.2', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--primary)', fontWeight: 'bold', marginTop: '0.25rem' }}>₱{p.price?.toFixed(2)}</div>
             </div>
           </Link>
         );
@@ -156,27 +175,43 @@ export function ProductChatWidget() {
       {isOpen && (
         <div style={{
           position: 'fixed',
-          bottom: '2rem',
+          bottom: '5rem',
           right: '2rem',
-          width: '350px',
-          height: '500px',
-          background: 'var(--background)',
-          borderRadius: 'var(--radius-lg)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+          width: '380px',
+          height: '600px',
+          maxHeight: '80vh',
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderRadius: '24px',
+          boxShadow: '0 12px 48px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.2)',
           display: 'flex',
           flexDirection: 'column',
           zIndex: 9999,
-          border: '1px solid var(--border)',
-          overflow: 'hidden'
-        }}>
+          overflow: 'hidden',
+          animation: 'fade-in 0.2s ease-out'
+        }} className="dark-mode-chat">
+          <style dangerouslySetInnerHTML={{__html: `
+            .dark-mode-chat {
+              background: var(--background) !important;
+              border: 1px solid var(--border);
+            }
+          `}} />
           {/* Header */}
-          <div style={{ padding: '1rem', background: 'var(--background-secondary)', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ 
+            padding: '1.25rem', 
+            background: 'linear-gradient(135deg, var(--primary), #8b5cf6)', 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            color: 'white'
+          }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1rem' }}>Chat Support</h3>
-              {productName && <div style={{ fontSize: '0.75rem', color: 'var(--foreground-muted)' }}>Asking about {productName}</div>}
+              <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600, color: 'white' }}>Chat Support</h3>
+              {productName && <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.9)', marginTop: '0.25rem' }}>Asking about {productName}</div>}
             </div>
-            <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--foreground-muted)' }}>
-              <X size={20} />
+            <button onClick={() => setIsOpen(false)} style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '50%', padding: '0.5rem', border: 'none', cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', transition: 'background 0.2s' }}>
+              <X size={18} />
             </button>
           </div>
 
@@ -194,12 +229,14 @@ export function ProductChatWidget() {
                   </div>
                   <div style={{
                     padding: msg.content.startsWith("PRODUCT_LINK:") ? '0.25rem' : '0.75rem 1rem',
-                    background: msg.senderRole === "USER" ? 'var(--primary)' : 'var(--background-secondary)',
+                    background: msg.senderRole === "USER" ? 'linear-gradient(135deg, var(--primary), #3b82f6)' : 'var(--background)',
                     color: msg.senderRole === "USER" ? 'white' : 'var(--foreground)',
-                    borderRadius: '1rem',
-                    borderBottomRightRadius: msg.senderRole === "USER" ? '0' : '1rem',
-                    borderBottomLeftRadius: msg.senderRole === "USER" ? '1rem' : '0',
-                    fontSize: '0.875rem'
+                    borderRadius: '18px',
+                    borderBottomRightRadius: msg.senderRole === "USER" ? '4px' : '18px',
+                    borderBottomLeftRadius: msg.senderRole === "USER" ? '18px' : '4px',
+                    fontSize: '0.9375rem',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                    border: msg.senderRole === "USER" ? 'none' : '1px solid var(--border)'
                   }}>
                     {renderMessageContent(msg.content)}
                   </div>
@@ -223,21 +260,22 @@ export function ProductChatWidget() {
           )}
 
           {/* Input */}
-          <form onSubmit={(e) => handleSend(e)} style={{ padding: '1rem', borderTop: '1px solid var(--border)', display: 'flex', gap: '0.5rem' }}>
+          <form onSubmit={(e) => handleSend(e)} style={{ padding: '1rem', background: 'var(--background)', borderTop: '1px solid var(--border)', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <input 
               type="text" 
               value={newMessage}
               onChange={e => setNewMessage(e.target.value)}
               placeholder="Type a message..."
-              disabled={isLoading}
-              style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)', background: 'var(--background)', color: 'var(--foreground)', outline: 'none' }}
+              style={{ flex: 1, padding: '0.875rem 1rem', borderRadius: '24px', border: '1px solid var(--border)', background: 'var(--background-secondary)', color: 'var(--foreground)', outline: 'none', fontSize: '0.9375rem', transition: 'border-color 0.2s' }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
             />
             <button 
               type="submit" 
-              disabled={isLoading || !newMessage.trim()}
-              style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: newMessage.trim() ? 1 : 0.5 }}
+              disabled={!newMessage.trim()}
+              style={{ width: '44px', height: '44px', borderRadius: '50%', background: newMessage.trim() ? 'linear-gradient(135deg, var(--primary), #8b5cf6)' : 'var(--border)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newMessage.trim() ? 'pointer' : 'default', transition: 'all 0.2s', transform: newMessage.trim() ? 'scale(1)' : 'scale(0.95)' }}
             >
-              <Send size={18} />
+              <Send size={18} style={{ marginLeft: '2px' }} />
             </button>
           </form>
         </div>
