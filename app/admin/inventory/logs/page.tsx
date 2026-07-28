@@ -41,7 +41,9 @@ export default async function InventoryLogsPage({ searchParams }: { searchParams
               <th style={{ padding: '1rem', fontWeight: '500' }}>Date</th>
               <th style={{ padding: '1rem', fontWeight: '500' }}>Item</th>
               <th style={{ padding: '1rem', fontWeight: '500' }}>Action Type</th>
-              <th style={{ padding: '1rem', fontWeight: '500' }}>Quantity</th>
+              <th style={{ padding: '1rem', fontWeight: '500' }}>Qty Change</th>
+              <th style={{ padding: '1rem', fontWeight: '500' }}>Before</th>
+              <th style={{ padding: '1rem', fontWeight: '500' }}>After</th>
               <th style={{ padding: '1rem', fontWeight: '500' }}>Reason / Notes</th>
               <th style={{ padding: '1rem', fontWeight: '500' }}>User</th>
             </tr>
@@ -82,6 +84,12 @@ export default async function InventoryLogsPage({ searchParams }: { searchParams
                   </span>
                 </td>
                 <td style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--foreground-muted)' }}>
+                  {log.stockBefore}
+                </td>
+                <td style={{ padding: '1rem', fontSize: '0.875rem', fontWeight: '500' }}>
+                  {log.stockAfter}
+                </td>
+                <td style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--foreground-muted)' }}>
                   {log.reason || '-'}
                 </td>
                 <td style={{ padding: '1rem', fontSize: '0.875rem' }}>
@@ -91,7 +99,7 @@ export default async function InventoryLogsPage({ searchParams }: { searchParams
             ))}
             {logs.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: 'var(--foreground-muted)' }}>No inventory logs found.</td>
+                <td colSpan={8} style={{ padding: '2rem', textAlign: 'center', color: 'var(--foreground-muted)' }}>No inventory logs found.</td>
               </tr>
             )}
           </tbody>

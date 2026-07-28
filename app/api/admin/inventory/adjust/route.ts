@@ -33,19 +33,7 @@ export async function POST(req: Request) {
 
     // We use a transaction to ensure both the stock count and log are updated together
     await prisma.$transaction(async (tx) => {
-      // 1. Create the log entry
-      await tx.inventoryLog.create({
-        data: {
-          productId,
-          variantId: variantId || null,
-          userId,
-          type,
-          quantity,
-          reason,
-        }
-      });
-
-      // 2. Determine stock changes based on type
+      // 1. Determine stock changes based on type
       let stockChange = 0;
       let defectiveStockChange = 0;
 
@@ -58,22 +46,51 @@ export async function POST(req: Request) {
         stockChange = quantity; // e.g. +2 or -2 to correct a miscount
       }
 
-      // 3. Update the specific variant (if applicable) and the main product
+      let stockBefore = 0;
+      let stockAfter = 0;
+
+      // 2. Update the specific variant (if applicable) and the main product
       if (variantId) {
-        await tx.productVariant.update({
+        const v = await tx.productVariant.update({
           where: { id: variantId },
           data: {
             stock: { increment: stockChange },
             defectiveStock: { increment: defectiveStockChange }
           }
         });
+        stockAfter = v.stock;
+        stockBefore = stockAfter - stockChange;
+
+        await tx.product.update({
+          where: { id: productId },
+          data: {
+            stock: { increment: stockChange },
+            defectiveStock: { increment: defectiveStockChange }
+          }
+        });
+      } else {
+        const p = await tx.product.update({
+          where: { id: productId },
+          data: {
+            stock: { increment: stockChange },
+            defectiveStock: { increment: defectiveStockChange }
+          }
+        });
+        stockAfter = p.stock;
+        stockBefore = stockAfter - stockChange;
       }
 
-      await tx.product.update({
-        where: { id: productId },
+      // 3. Create the log entry
+      await tx.inventoryLog.create({
         data: {
-          stock: { increment: stockChange },
-          defectiveStock: { increment: defectiveStockChange }
+          productId,
+          variantId: variantId || null,
+          userId,
+          type,
+          quantity,
+          stockBefore,
+          stockAfter,
+          reason,
         }
       });
     });

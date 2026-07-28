@@ -128,11 +128,17 @@ export async function POST(req: Request) {
       });
 
       for (const item of items) {
+        let stockBefore = 0;
+        let stockAfter = 0;
+
         if (item.variantId) {
-          await tx.productVariant.update({
+          const v = await tx.productVariant.update({
             where: { id: item.variantId },
             data: { stock: { decrement: item.quantity } }
           });
+          stockBefore = v.stock + item.quantity;
+          stockAfter = v.stock;
+          
           // Also decrement the main product stock to keep it consistent
           await tx.product.update({
             where: { id: item.productId },
@@ -142,13 +148,15 @@ export async function POST(req: Request) {
             }
           });
         } else {
-          await tx.product.update({
+          const p = await tx.product.update({
             where: { id: item.productId },
             data: {
               stock: { decrement: item.quantity },
               salesCount: { increment: item.quantity }
             }
           });
+          stockBefore = p.stock + item.quantity;
+          stockAfter = p.stock;
         }
 
         // Log the inventory deduction
@@ -159,6 +167,8 @@ export async function POST(req: Request) {
             userId: user.id,
             type: "SALE",
             quantity: -item.quantity,
+            stockBefore,
+            stockAfter,
             reason: `Order placed (ID: ${newOrder.id})`
           }
         });

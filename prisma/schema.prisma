@@ -123,10 +123,12 @@ model InventoryLog {
   variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  type      String   // "RESTOCK", "SALE", "REJECT", "MANUAL_ADJUSTMENT"
-  quantity  Int
-  reason    String?
-  createdAt DateTime @default(now())
+  type        String   // "RESTOCK", "SALE", "REJECT", "MANUAL_ADJUSTMENT"
+  quantity    Int
+  stockBefore Int      @default(0)
+  stockAfter  Int      @default(0)
+  reason      String?
+  createdAt   DateTime @default(now())
 
   @@index([productId])
   @@index([userId])
