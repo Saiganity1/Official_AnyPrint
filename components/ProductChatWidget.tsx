@@ -185,7 +185,7 @@ export function ProductChatWidget() {
       {/* Chat Window */}
       {isOpen && (
         <div 
-          className="no-print" style={{
+          className="no-print dark-mode-chat" style={{
           position: 'fixed',
           bottom: '5rem',
           right: '2rem',
@@ -202,7 +202,7 @@ export function ProductChatWidget() {
           zIndex: 9999,
           overflow: 'hidden',
           animation: 'fade-in 0.2s ease-out'
-        }} className="dark-mode-chat">
+        }}>
           <style dangerouslySetInnerHTML={{__html: `
             .dark-mode-chat {
               background: var(--background) !important;
