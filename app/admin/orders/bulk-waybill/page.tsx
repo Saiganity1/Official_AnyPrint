@@ -41,7 +41,8 @@ export default async function BulkWaybillPage({ searchParams }: { searchParams: 
       <style dangerouslySetInnerHTML={{__html: `
         @page { size: 100mm 150mm; margin: 0; }
         @media print {
-          .no-print { display: none !important; }
+          .no-print, nav, aside, footer, header { display: none !important; }
+          main { padding: 0 !important; margin: 0 !important; }
           body, html { background: white; margin: 0; padding: 0; width: 100mm; }
           .waybill-container { border: none !important; box-shadow: none !important; margin: 0 !important; width: 100mm !important; height: 150mm !important; overflow: hidden; page-break-after: always; }
         }
