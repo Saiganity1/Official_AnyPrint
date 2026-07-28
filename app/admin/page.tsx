@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Package, ShoppingBag, Users, DollarSign } from "lucide-react";
+import { Package, ShoppingBag, Users, DollarSign, Eye } from "lucide-react";
 import dynamic from "next/dynamic";
 import { RefreshDashboardButton } from "@/components/RefreshDashboardButton";
 
@@ -12,7 +12,7 @@ export default async function AdminDashboard() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const [productCount, orderCount, userCount, orders, lowStockProducts, recentOrders] = await Promise.all([
+    const [productCount, orderCount, userCount, orders, lowStockProducts, recentOrders, topProducts, visitorStats] = await Promise.all([
       prisma.product.count(),
       prisma.order.count(),
       prisma.user.count(),
@@ -26,6 +26,15 @@ export default async function AdminDashboard() {
         where: { createdAt: { gte: thirtyDaysAgo } },
         include: { items: { include: { product: { select: { category: true } } } } },
         orderBy: { createdAt: 'asc' }
+      }),
+      prisma.product.findMany({
+        orderBy: { salesCount: 'desc' },
+        take: 5,
+        select: { name: true, salesCount: true }
+      }),
+      prisma.visitorStat.findMany({
+        where: { date: { gte: thirtyDaysAgo } },
+        orderBy: { date: 'asc' }
       })
     ]);
   
@@ -69,6 +78,35 @@ export default async function AdminDashboard() {
       name,
       value: categoryMap[name]
     })).sort((a, b) => b.value - a.value);
+
+    // Process Visitor Data
+    const visitorMap: Record<string, number> = {};
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateString = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      visitorMap[dateString] = 0;
+    }
+
+    visitorStats.forEach(stat => {
+      const dateString = new Date(stat.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      if (visitorMap[dateString] !== undefined) {
+        visitorMap[dateString] = stat.count;
+      }
+    });
+
+    const visitorData = Object.keys(visitorMap).map(date => ({
+      date,
+      visitors: visitorMap[date]
+    }));
+
+    // Process Best Sellers Data
+    const bestSellerData = topProducts.map(p => ({
+      name: p.name,
+      sales: p.salesCount
+    }));
+
+    const totalVisitors = visitorStats.reduce((sum, stat) => sum + stat.count, 0);
   
     return (
       <div className="animate-fade-in">
@@ -117,6 +155,16 @@ export default async function AdminDashboard() {
               <h3 style={{ fontSize: '1.5rem' }}>{userCount}</h3>
             </div>
           </div>
+
+          <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <div style={{ padding: '1rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderRadius: 'var(--radius-md)' }}>
+              <Eye size={24} />
+            </div>
+            <div>
+              <p style={{ color: 'var(--foreground-muted)', fontSize: '0.875rem' }}>Visitors (30d)</p>
+              <h3 style={{ fontSize: '1.5rem' }}>{totalVisitors}</h3>
+            </div>
+          </div>
         </div>
 
         {lowStockProducts.length > 0 && (
@@ -141,7 +189,7 @@ export default async function AdminDashboard() {
         )}
         
         {categoryData.length > 0 ? (
-          <SalesCharts revenueData={revenueData} categoryData={categoryData} />
+          <SalesCharts revenueData={revenueData} categoryData={categoryData} visitorData={visitorData} bestSellerData={bestSellerData} />
         ) : (
           <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', marginBottom: '3rem' }}>
             <p style={{ color: 'var(--foreground-muted)' }}>Not enough data to generate sales charts yet.</p>

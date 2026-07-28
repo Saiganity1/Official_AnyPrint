@@ -12,6 +12,8 @@ import {
   Pie,
   Cell,
   Legend,
+  BarChart,
+  Bar,
 } from "recharts";
 
 type RevenueData = {
@@ -24,20 +26,32 @@ type CategoryData = {
   value: number;
 };
 
+type BestSellerData = {
+  name: string;
+  sales: number;
+};
+
+type VisitorData = {
+  date: string;
+  visitors: number;
+};
+
 interface SalesChartsProps {
   revenueData: RevenueData[];
   categoryData: CategoryData[];
+  bestSellerData: BestSellerData[];
+  visitorData: VisitorData[];
 }
 
 const COLORS = ["#3b82f6", "#ec4899", "#8b5cf6", "#10b981", "#f59e0b", "#6366f1", "#14b8a6"];
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label, prefix = "₱" }: any) => {
   if (active && payload && payload.length) {
     return (
       <div style={{ backgroundColor: 'var(--card-bg)', padding: '1rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', backdropFilter: 'blur(10px)' }}>
         <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>{label}</p>
         <p style={{ color: 'var(--primary)' }}>
-          Revenue: ₱{payload[0].value.toFixed(2)}
+          Value: {prefix === "₱" ? `₱${payload[0].value.toFixed(2)}` : payload[0].value}
         </p>
       </div>
     );
@@ -45,7 +59,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function SalesCharts({ revenueData, categoryData }: SalesChartsProps) {
+export function SalesCharts({ revenueData, categoryData, bestSellerData, visitorData }: SalesChartsProps) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
       
@@ -109,6 +123,59 @@ export function SalesCharts({ revenueData, categoryData }: SalesChartsProps) {
                 wrapperStyle={{ color: 'var(--foreground-muted)', fontSize: '0.875rem' }}
               />
             </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Website Visitors */}
+      <div className="glass-card" style={{ padding: '1.5rem', height: '400px', display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', color: 'var(--foreground)' }}>Website Visitors (Last 30 Days)</h3>
+        <div style={{ flex: 1, width: '100%' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={visitorData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+              <XAxis dataKey="date" stroke="var(--foreground-muted)" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis 
+                stroke="var(--foreground-muted)" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+                allowDecimals={false}
+              />
+              <Tooltip content={<CustomTooltip prefix="" />} />
+              <Line 
+                type="monotone" 
+                dataKey="visitors" 
+                stroke="#10b981" 
+                strokeWidth={3}
+                dot={{ r: 4, fill: 'var(--background)', stroke: '#10b981', strokeWidth: 2 }}
+                activeDot={{ r: 6, fill: '#10b981', stroke: 'var(--background)', strokeWidth: 2 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Best Sellers */}
+      <div className="glass-card" style={{ padding: '1.5rem', height: '400px', display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', color: 'var(--foreground)' }}>Best Selling Products</h3>
+        <div style={{ flex: 1, width: '100%' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={bestSellerData} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 40 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+              <XAxis type="number" stroke="var(--foreground-muted)" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+              <YAxis 
+                type="category" 
+                dataKey="name" 
+                stroke="var(--foreground-muted)" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false}
+                width={100}
+              />
+              <Tooltip content={<CustomTooltip prefix="" />} />
+              <Bar dataKey="sales" fill="var(--primary)" radius={[0, 4, 4, 0]} barSize={20} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>

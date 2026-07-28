@@ -5,6 +5,7 @@ import { Providers } from "./Providers";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ProductChatWidget } from "@/components/ProductChatWidget";
+import { VisitorTracker } from "@/components/VisitorTracker";
 import { IdleTimeout } from "@/components/IdleTimeout";
 
 import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
@@ -38,6 +39,7 @@ export default function RootLayout({
           <ProfileCompletionModal />
           <ProductChatWidget />
           <IdleTimeout />
+          <VisitorTracker />
         </Providers>
       </body>
     </html>
