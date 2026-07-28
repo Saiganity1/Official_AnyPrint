@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     const { items, total, shippingAddress, saveAddress, addressData } = result.data;
 
     let serverTotal = 0;
-    const validatedItems = [];
+    const validatedItems: any[] = [];
 
     // Verify stock and calculate TRUE price before creating order
     for (const item of items) {
