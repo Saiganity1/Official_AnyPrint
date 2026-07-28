@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export function OrderTrackingInput({ orderId, initialTrackingNumber }: { orderId: string, initialTrackingNumber: string | null }) {
@@ -8,6 +8,10 @@ export function OrderTrackingInput({ orderId, initialTrackingNumber }: { orderId
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setTrackingNumber(initialTrackingNumber || "");
+  }, [initialTrackingNumber]);
 
   const handleSave = async () => {
     setIsLoading(true);
