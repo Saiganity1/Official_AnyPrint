@@ -54,16 +54,25 @@ export async function POST(req: Request) {
 
     const { items, total, shippingAddress, saveAddress, addressData } = result.data;
 
-    // Verify stock before creating order
+    let serverTotal = 0;
+    const validatedItems = [];
+
+    // Verify stock and calculate TRUE price before creating order
     for (const item of items) {
+      let truePrice = 0;
+
       if (item.variantId) {
-        const variant = await prisma.productVariant.findUnique({ where: { id: item.variantId } });
+        const variant = await prisma.productVariant.findUnique({ 
+          where: { id: item.variantId },
+          include: { product: true }
+        });
         if (!variant) {
           return new NextResponse(`Variant not found for: ${item.name}`, { status: 400 });
         }
         if (variant.stock < item.quantity) {
           return new NextResponse(`Not enough stock for ${item.name}. Available: ${variant.stock}`, { status: 400 });
         }
+        truePrice = variant.price !== null ? variant.price : variant.product.price;
       } else {
         const product = await prisma.product.findUnique({ where: { id: item.productId } });
         if (!product) {
@@ -72,7 +81,14 @@ export async function POST(req: Request) {
         if (product.stock < item.quantity) {
           return new NextResponse(`Not enough stock for ${product.name}. Available: ${product.stock}`, { status: 400 });
         }
+        truePrice = product.price;
       }
+
+      validatedItems.push({
+        ...item,
+        price: truePrice
+      });
+      serverTotal += truePrice * item.quantity;
     }
 
     // Create the order and deduct stock in a transaction
@@ -95,13 +111,13 @@ export async function POST(req: Request) {
       const newOrder = await tx.order.create({
         data: {
           userId: user.id,
-          total: total,
+          total: serverTotal,
           shippingAddress: shippingAddress,
           latitude: addressData?.latitude,
           longitude: addressData?.longitude,
           status: "PENDING",
           items: {
-            create: items.map((item: any) => ({
+            create: validatedItems.map((item: any) => ({
               productId: item.productId,
               variantId: item.variantId || null,
               quantity: item.quantity,
