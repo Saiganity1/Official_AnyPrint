@@ -42,6 +42,9 @@ export function AdminSidebar({ role }: AdminSidebarProps) {
         <Link href="/admin/messages" style={getLinkStyle('/admin/messages')}>
           Messages
         </Link>
+        <Link href="/admin/logs" style={getLinkStyle('/admin/logs')}>
+          System Logs
+        </Link>
         {role === "OWNER" && (
           <Link href="/admin/users" style={getLinkStyle('/admin/users')}>
             Users (Owner)

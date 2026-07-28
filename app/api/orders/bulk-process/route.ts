@@ -57,6 +57,18 @@ export async function POST(req: Request) {
       }
     }
 
+    // Insert an AuditLog for generating waybills
+    const userId = (session?.user as any)?.id;
+    if (processedIds.length > 0 && userId) {
+      await prisma.auditLog.create({
+        data: {
+          userId: userId,
+          action: "PRINTED_WAYBILL",
+          details: `Generated waybills for ${processedIds.length} order(s): ${processedIds.map(id => id.slice(-8).toUpperCase()).join(', ')}`
+        }
+      });
+    }
+
     return NextResponse.json({ success: true, processedIds });
   } catch (error) {
     console.error("BULK_PROCESS_ERROR", error);
