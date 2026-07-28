@@ -48,7 +48,7 @@ export default async function WaybillPage({ params }: { params: Promise<{ id: st
           .no-print, nav, aside, footer, header { display: none !important; }
           main { padding: 0 !important; margin: 0 !important; }
           body, html { background: white; margin: 0; padding: 0; width: 100mm; height: 150mm; }
-          .waybill-container { border: none !important; box-shadow: none !important; margin: 0 !important; width: 100mm !important; height: 150mm !important; overflow: hidden; page-break-after: always; }
+          .waybill-container { border: none !important; box-shadow: none !important; margin: 0 !important; width: 100mm !important; height: 148mm !important; overflow: hidden; page-break-inside: avoid; }
         }
       `}} />
       

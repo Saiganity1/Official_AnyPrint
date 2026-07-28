@@ -11,12 +11,25 @@ import toast from "react-hot-toast";
 export function AdminOrdersTable({ initialOrders }: { initialOrders: any[] }) {
   const router = useRouter();
   const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterDate, setFilterDate] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isProcessing, setIsProcessing] = useState(false);
 
   const filteredOrders = initialOrders.filter((order) => {
-    if (filterStatus === "ALL") return true;
-    return order.status === filterStatus;
+    // Status Filter
+    if (filterStatus !== "ALL" && order.status !== filterStatus) return false;
+    
+    // Date Filter
+    if (filterDate) {
+      const d = new Date(order.createdAt);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const orderDateString = `${yyyy}-${mm}-${dd}`;
+      if (orderDateString !== filterDate) return false;
+    }
+    
+    return true;
   });
 
   const toggleSelectAll = () => {
@@ -86,6 +99,22 @@ export function AdminOrdersTable({ initialOrders }: { initialOrders: any[] }) {
             <option value="DELIVERED">DELIVERED</option>
             <option value="CANCELLED">CANCELLED</option>
           </select>
+          
+          <label style={{ fontWeight: 'bold', marginLeft: '1rem' }}>Date:</label>
+          <input 
+            type="date"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+            style={{ padding: '0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--background-secondary)', color: 'var(--foreground)' }}
+          />
+          {filterDate && (
+            <button 
+              onClick={() => setFilterDate("")} 
+              style={{ fontSize: '0.75rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--primary)', textDecoration: 'underline' }}
+            >
+              Clear
+            </button>
+          )}
         </div>
 
         {selectedIds.size > 0 && (
