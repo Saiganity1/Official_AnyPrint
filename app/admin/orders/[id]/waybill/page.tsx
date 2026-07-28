@@ -39,7 +39,7 @@ export default async function WaybillPage({ params }: { params: Promise<{ id: st
   const qrValue = `https://official-any-print.vercel.app/orders/${order.id}`;
 
   return (
-    <div style={{ background: '#e5e7eb', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 0', fontFamily: 'Arial, sans-serif' }}>
+    <div className="waybill-wrapper" style={{ background: '#e5e7eb', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 0', fontFamily: 'Arial, sans-serif' }}>
       
       {/* Print Button (Hidden when printing) */}
       <style dangerouslySetInnerHTML={{__html: `
@@ -48,6 +48,7 @@ export default async function WaybillPage({ params }: { params: Promise<{ id: st
           .no-print, nav, aside, footer, header { display: none !important; }
           main { padding: 0 !important; margin: 0 !important; }
           body, html { background: white; margin: 0; padding: 0; width: 100mm; height: 150mm; }
+          .waybill-wrapper { min-height: 0 !important; padding: 0 !important; background: white !important; display: block !important; }
           .waybill-container { border: none !important; box-shadow: none !important; margin: 0 !important; width: 100mm !important; height: 148mm !important; overflow: hidden; page-break-inside: avoid; }
         }
       `}} />
