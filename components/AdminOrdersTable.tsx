@@ -82,7 +82,10 @@ export function AdminOrdersTable({ initialOrders }: { initialOrders: any[] }) {
     }
   };
 
-  const handleSingleProcess = async (id: string) => {
+  const handleSingleProcess = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     const loadingToast = toast.loading("Processing waybill...");
     try {
       const res = await fetch("/api/orders/bulk-process", {
@@ -94,7 +97,12 @@ export function AdminOrdersTable({ initialOrders }: { initialOrders: any[] }) {
       if (!res.ok) throw new Error("Failed to process order");
       
       toast.success("Waybill generated!", { id: loadingToast });
-      window.open(`/admin/orders/${id}/waybill`, '_blank');
+      
+      const newWin = window.open(`/admin/orders/${id}/waybill`, '_blank');
+      if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+        toast.error("Popup blocked by browser. Please allow popups.");
+      }
+      
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -203,7 +211,8 @@ export function AdminOrdersTable({ initialOrders }: { initialOrders: any[] }) {
                 </td>
                 <td style={{ padding: '1rem' }}>
                   <button 
-                    onClick={() => handleSingleProcess(order.id)}
+                    type="button"
+                    onClick={(e) => handleSingleProcess(e, order.id)}
                     style={{ 
                       display: 'inline-flex', 
                       alignItems: 'center', 
