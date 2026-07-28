@@ -5,6 +5,7 @@ import { Providers } from "./Providers";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ProductChatWidget } from "@/components/ProductChatWidget";
+import { IdleTimeout } from "@/components/IdleTimeout";
 
 import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
 import NextTopLoader from 'nextjs-toploader';
@@ -36,6 +37,7 @@ export default function RootLayout({
           </div>
           <ProfileCompletionModal />
           <ProductChatWidget />
+          <IdleTimeout />
         </Providers>
       </body>
     </html>
