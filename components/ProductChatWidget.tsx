@@ -158,6 +158,7 @@ export function ProductChatWidget() {
       {/* Floating Button */}
       {!isOpen && (
         <button 
+          className="no-print"
           onClick={() => setIsOpen(true)}
           style={{
             position: 'fixed',
@@ -183,7 +184,8 @@ export function ProductChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div style={{
+        <div 
+          className="no-print" style={{
           position: 'fixed',
           bottom: '5rem',
           right: '2rem',

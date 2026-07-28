@@ -82,6 +82,26 @@ export function AdminOrdersTable({ initialOrders }: { initialOrders: any[] }) {
     }
   };
 
+  const handleSingleProcess = async (id: string) => {
+    const loadingToast = toast.loading("Processing waybill...");
+    try {
+      const res = await fetch("/api/orders/bulk-process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderIds: [id] })
+      });
+
+      if (!res.ok) throw new Error("Failed to process order");
+      
+      toast.success("Waybill generated!", { id: loadingToast });
+      window.open(`/admin/orders/${id}/waybill`, '_blank');
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to process order.", { id: loadingToast });
+    }
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -182,9 +202,8 @@ export function AdminOrdersTable({ initialOrders }: { initialOrders: any[] }) {
                   <OrderTrackingInput orderId={order.id} initialTrackingNumber={order.trackingNumber} />
                 </td>
                 <td style={{ padding: '1rem' }}>
-                  <Link 
-                    href={`/admin/orders/${order.id}/waybill`} 
-                    target="_blank"
+                  <button 
+                    onClick={() => handleSingleProcess(order.id)}
                     style={{ 
                       display: 'inline-flex', 
                       alignItems: 'center', 
@@ -195,11 +214,12 @@ export function AdminOrdersTable({ initialOrders }: { initialOrders: any[] }) {
                       borderRadius: 'var(--radius-sm)',
                       textDecoration: 'none',
                       fontSize: '0.75rem',
-                      border: '1px solid var(--border)'
+                      border: '1px solid var(--border)',
+                      cursor: 'pointer'
                     }}
                   >
                     <Printer size={14} /> Waybill
-                  </Link>
+                  </button>
                 </td>
               </tr>
             ))}
