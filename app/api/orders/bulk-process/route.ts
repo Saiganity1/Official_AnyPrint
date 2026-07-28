@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { createJntOrder } from "@/lib/couriers/jnt";
 
 export async function POST(req: Request) {
   try {
@@ -33,9 +34,17 @@ export async function POST(req: Request) {
 
         // Generate tracking number if it doesn't exist
         if (!order.trackingNumber) {
-          // Generate a fake J&T tracking number: JT + 12 digits
-          const random12 = Math.floor(Math.random() * 1000000000000).toString().padStart(12, '0');
-          updates.trackingNumber = `JT${random12}`;
+          // Send order to J&T service (will use real API if keys exist, else returns mock)
+          const jntResult = await createJntOrder({
+            id: order.id,
+            total: order.total,
+            // Assuming formatting based on previous code
+            receiverName: order.shippingAddress?.split(',')[0] || "Customer",
+            receiverPhone: order.shippingAddress?.split(',')[1] || "No Phone",
+            receiverAddress: order.shippingAddress || "No Address",
+          });
+          
+          updates.trackingNumber = jntResult.trackingNumber;
         }
 
         if (Object.keys(updates).length > 0) {
