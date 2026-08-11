@@ -305,13 +305,15 @@ input, textarea, select {
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
   transition: all 0.2s ease;
-  color: inherit;
+  color: var(--primary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   text-decoration: none;
 }
 
 .nav-item:hover {
-  background: rgba(0, 174, 239, 0.1);
-  color: var(--primary);
+  color: var(--primary-hover);
   transform: translateY(-2px);
 }
 

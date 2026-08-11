@@ -4,7 +4,7 @@ import { Mail, Phone, MapPin, Globe, MessageCircle } from "lucide-react";
 export function Footer() {
   return (
     <footer style={{
-      background: 'var(--background-secondary)',
+      background: 'var(--background)',
       borderTop: '1px solid var(--border)',
       padding: '4rem 1.5rem 2rem 1.5rem',
       marginTop: 'auto'
