@@ -89,7 +89,7 @@ export function Navbar() {
               </button>
             </div>
           ) : (
-            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="nav-item">
+            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
               Sign In
             </Link>
           )}

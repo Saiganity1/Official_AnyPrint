@@ -11,25 +11,73 @@ export default function Home() {
     <main>
       {/* Hero Section */}
       <section style={{ 
-        padding: '10rem 0 6rem',
-        background: 'var(--background)'
+        position: 'relative', 
+        minHeight: '70vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, var(--background) 0%, var(--background-secondary) 100%)',
+        overflow: 'hidden'
       }}>
-        <div className="container animate-fade-in">
-          <div style={{ maxWidth: '900px' }}>
-            <h1 style={{ fontSize: '5rem', fontWeight: 'bold', color: 'var(--primary)', lineHeight: '1.1', marginBottom: '2rem', textTransform: 'uppercase', fontFamily: 'var(--font-outfit)' }}>
-              Wear Your Imagination.
-            </h1>
-            <p style={{ fontSize: '1.5rem', color: 'var(--primary)', marginBottom: '4rem', maxWidth: '700px', lineHeight: '1.4' }}>
-              Premium custom apparel printed with state-of-the-art technology. 
-              From single shirts to bulk orders, we bring your designs to life.
-            </p>
-            <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap' }}>
-              <Link href="/products" style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Shop Now
-              </Link>
-              <Link href="#services" style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Our Services
-              </Link>
+        <div className="animate-orb-1" style={{
+          position: 'absolute',
+          top: '-10%', left: '-10%',
+          width: '50vw', height: '50vw',
+          background: 'radial-gradient(circle, rgba(0, 174, 239, 0.4) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(80px)'
+        }}></div>
+        <div className="animate-orb-2" style={{
+          position: 'absolute',
+          bottom: '-10%', right: '-10%',
+          width: '40vw', height: '40vw',
+          background: 'radial-gradient(circle, rgba(236, 0, 140, 0.4) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(80px)'
+        }}></div>
+        <div className="animate-orb-3" style={{
+          position: 'absolute',
+          top: '30%', left: '40%',
+          width: '30vw', height: '30vw',
+          background: 'radial-gradient(circle, rgba(255, 242, 0, 0.3) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(80px)'
+        }}></div>
+
+        <div className="container animate-fade-in" style={{ position: 'relative', zIndex: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
+            {/* Left Column - Text */}
+            <div style={{ flex: '1', zIndex: 1 }}>
+              <h1 className="hero-title">
+                Wear Your <span className="text-gradient">Imagination.</span>
+              </h1>
+              <p className="hero-subtitle">
+                Premium custom apparel printed with state-of-the-art technology. 
+                From single shirts to bulk orders, we bring your designs to life.
+              </p>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <Link href="/products" className="btn-primary" style={{ fontSize: '1.125rem', padding: '1rem 2rem' }}>
+                  Shop Now
+                </Link>
+                <Link href="#services" className="btn-secondary" style={{ fontSize: '1.125rem', padding: '1rem 2rem' }}>
+                  Our Services
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column - Premium Mockup */}
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div className="glass-card" style={{ padding: '1rem', transform: 'rotate(2deg)', maxWidth: '450px', width: '100%', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(45deg, var(--primary), var(--secondary))', opacity: 0.1, borderRadius: 'inherit', filter: 'blur(20px)' }}></div>
+                <Image 
+                  src="/hero-mockup.png" 
+                  alt="Premium Custom Apparel Mockup" 
+                  width={600} 
+                  height={600} 
+                  style={{ width: '100%', height: 'auto', borderRadius: 'var(--radius-md)', position: 'relative', zIndex: 2 }}
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -38,41 +86,41 @@ export default function Home() {
       {/* Features Section */}
       <section className="container" style={{ padding: '6rem 1.5rem 2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--primary)' }}>WHY CHOOSE ANYPRINT</h2>
-          <p style={{ color: 'var(--primary)', fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto' }}>We combine premium materials with expert craftsmanship to deliver products that make your brand stand out.</p>
+          <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Why Choose <span className="text-gradient">Anyprint</span></h2>
+          <p style={{ color: 'var(--foreground-muted)', fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto' }}>We combine premium materials with expert craftsmanship to deliver products that make your brand stand out.</p>
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
-          <div style={{ padding: '3rem 2rem', textAlign: 'center', background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
-            <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-              <ShieldCheck size={48} strokeWidth={1.5} />
+          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(0, 174, 239, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+              <ShieldCheck size={32} />
             </div>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--primary)' }}>Premium Quality</h3>
-            <p style={{ color: 'var(--primary)', lineHeight: '1.6', opacity: 0.8 }}>Top-tier materials and vibrant, long-lasting prints that endure.</p>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Premium Quality</h3>
+            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>Top-tier materials and vibrant, long-lasting prints that endure.</p>
           </div>
           
-          <div style={{ padding: '3rem 2rem', textAlign: 'center', background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
-            <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-              <Zap size={48} strokeWidth={1.5} />
+          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(236, 0, 140, 0.1)', color: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+              <Zap size={32} />
             </div>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--primary)' }}>Fast Turnaround</h3>
-            <p style={{ color: 'var(--primary)', lineHeight: '1.6', opacity: 0.8 }}>Quick, reliable processing to ensure you meet your crucial deadlines.</p>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Fast Turnaround</h3>
+            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>Quick, reliable processing to ensure you meet your crucial deadlines.</p>
           </div>
 
-          <div style={{ padding: '3rem 2rem', textAlign: 'center', background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
-            <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-              <Palette size={48} strokeWidth={1.5} />
+          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(255, 242, 0, 0.1)', color: '#d9a700', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+              <Palette size={32} />
             </div>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--primary)' }}>Custom Solutions</h3>
-            <p style={{ color: 'var(--primary)', lineHeight: '1.6', opacity: 0.8 }}>Every print is tailored exactly to your brand's specific creative needs.</p>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Custom Solutions</h3>
+            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>Every print is tailored exactly to your brand's specific creative needs.</p>
           </div>
 
-          <div style={{ padding: '3rem 2rem', textAlign: 'center', background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
-            <div style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-              <Truck size={48} strokeWidth={1.5} />
+          <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+              <Truck size={32} />
             </div>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--primary)' }}>Nationwide Delivery</h3>
-            <p style={{ color: 'var(--primary)', lineHeight: '1.6', opacity: 0.8 }}>Fast and secure shipping anywhere in the Philippines via J&T Express.</p>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Nationwide Delivery</h3>
+            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>Fast and secure shipping anywhere in the Philippines via J&T Express.</p>
           </div>
         </div>
       </section>
