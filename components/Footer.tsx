@@ -90,9 +90,7 @@ export function Footer() {
         fontSize: '0.875rem'
       }}>
         <p>&copy; {new Date().getFullYear()} AnyPrint Avenue. All rights reserved.</p>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <span>Designed with ❤️ in the Philippines</span>
-        </div>
+
       </div>
     </footer>
   );
