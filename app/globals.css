@@ -22,6 +22,11 @@
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
+
+  /* Minimalist Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -105,7 +110,7 @@ input, textarea, select {
 .glass-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: rgba(59, 130, 246, 0.3); /* subtle primary glow */
+  border-color: rgba(0, 174, 239, 0.3); /* subtle primary glow */
 }
 
 /* Image Hover Zoom Container */
@@ -222,7 +227,7 @@ input, textarea, select {
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 174, 239, 0.2);
 }
 
 /* Navbar */
@@ -473,13 +478,13 @@ input, textarea, select {
 }
 
 .category-link:hover {
-  background: rgba(59, 130, 246, 0.05);
+  background: rgba(0, 174, 239, 0.05);
   color: var(--primary);
 }
 
 .category-link.active {
   color: var(--primary);
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(0, 174, 239, 0.1);
   font-weight: 600;
 }
 
