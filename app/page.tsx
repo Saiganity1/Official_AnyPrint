@@ -48,12 +48,12 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
             {/* Left Column - Text */}
             <div style={{ flex: '1', zIndex: 1 }}>
-              <h1 className="hero-title">
-                Wear Your <span className="text-gradient">Imagination.</span>
+              <h1 className="hero-title" style={{ fontSize: '3.5rem', lineHeight: '1.2', marginBottom: '1.5rem' }}>
+                <span style={{ color: 'var(--primary)' }}>DTF & SUBLIMATION</span><br />
+                <span style={{ color: 'var(--secondary)' }}>PRINTING SERVICES</span>
               </h1>
-              <p className="hero-subtitle">
-                Premium custom apparel printed with state-of-the-art technology. 
-                From single shirts to bulk orders, we bring your designs to life.
+              <p className="hero-subtitle" style={{ fontSize: '1.1rem', maxWidth: '600px', lineHeight: '1.6', marginBottom: '2rem' }}>
+                AnyPrint Printing Services specializes in high-quality custom shirt printing, offering both Direct-to-Film (DTF) and sublimation methods. We bring vibrant, long-lasting designs to life on a wide range of fabrics—perfect for personalized gifts, branded apparel, team uniforms, or event merchandise.
               </p>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                 <Link href="/products" className="btn-primary" style={{ fontSize: '1.125rem', padding: '1rem 2rem' }}>
@@ -86,8 +86,7 @@ export default function Home() {
       {/* Features Section */}
       <section className="container" style={{ padding: '6rem 1.5rem 2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Why Choose <span className="text-gradient">Anyprint</span></h2>
-          <p style={{ color: 'var(--foreground-muted)', fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto' }}>We combine premium materials with expert craftsmanship to deliver products that make your brand stand out.</p>
+          <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--accent)' }}>What will you expect:</h2>
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
@@ -95,32 +94,29 @@ export default function Home() {
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(0, 174, 239, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
               <ShieldCheck size={32} />
             </div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Premium Quality</h3>
-            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>Top-tier materials and vibrant, long-lasting prints that endure.</p>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Expertise Services</h3>
           </div>
           
           <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(236, 0, 140, 0.1)', color: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
               <Zap size={32} />
             </div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Fast Turnaround</h3>
-            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>Quick, reliable processing to ensure you meet your crucial deadlines.</p>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Quality Assurance</h3>
+            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>For Retail/Bulk orders</p>
           </div>
 
           <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(255, 242, 0, 0.1)', color: '#d9a700', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
               <Palette size={32} />
             </div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Custom Solutions</h3>
-            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>Every print is tailored exactly to your brand's specific creative needs.</p>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Customer Satisfaction</h3>
           </div>
 
           <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
               <Truck size={32} />
             </div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Nationwide Delivery</h3>
-            <p style={{ color: 'var(--foreground-muted)', lineHeight: '1.6' }}>Fast and secure shipping anywhere in the Philippines via J&T Express.</p>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Affordable Options</h3>
           </div>
         </div>
       </section>
